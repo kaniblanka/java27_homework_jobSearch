@@ -31,8 +31,8 @@ public class VacancyController {
         return HttpStatus.OK;
     }
 
-    @GetMapping("category")
-    public HttpStatus getVacanciesByCategory(@RequestParam String category) {
+    @GetMapping("category/{category}")
+    public HttpStatus getVacanciesByCategory(@PathVariable String category) {
         return HttpStatus.OK;
     }
 }
