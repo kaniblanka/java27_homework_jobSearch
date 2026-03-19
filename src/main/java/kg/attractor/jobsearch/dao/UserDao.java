@@ -50,4 +50,29 @@ public class UserDao {
                 )
         );
     }
+
+    public List<User> findByName(String name) {
+        String sql = "select * from users where name = :name";
+
+        return namedParameterJdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource().addValue("name", name),
+                new UserMapper()
+        );
+    }
+
+    public Optional<User> findByPhone(String phone) {
+        String sql = "select * from users where phone = :phone";
+
+        return Optional.ofNullable(
+                DataAccessUtils.singleResult(
+                        namedParameterJdbcTemplate.query(
+                                sql,
+                                new MapSqlParameterSource().addValue("phone", phone),
+                                new UserMapper()
+                        )
+                )
+        );
+    }
+
 }
