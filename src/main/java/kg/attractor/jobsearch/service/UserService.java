@@ -9,4 +9,6 @@ public interface UserService {
     User findById(Long id);
     User findByEmail(String email);
     boolean existsByEmail(String email);
+    List<User> findByName(String name);
+    User findByPhone(String phone);
 }

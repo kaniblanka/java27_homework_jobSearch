@@ -36,4 +36,15 @@ public class UserServiceImpl implements UserService {
     public boolean existsByEmail(String email) {
         return userDao.findByEmail(email).isPresent();
     }
+
+    @Override
+    public List<User> findByName(String name) {
+        return userDao.findByName(name);
+    }
+
+    @Override
+    public User findByPhone(String phone) {
+        return userDao.findByPhone(phone)
+                .orElseThrow(UserNotFoundException::new);
+    }
 }
