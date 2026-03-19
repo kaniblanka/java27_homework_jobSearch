@@ -33,4 +33,14 @@ public class UserController {
     public boolean existsByEmail(@RequestParam String email) {
         return userService.existsByEmail(email);
     }
+
+    @GetMapping("by-name")
+    public List<User> findByName(@RequestParam String name) {
+        return userService.findByName(name);
+    }
+
+    @GetMapping("by-phone")
+    public User findByPhone(@RequestParam String phone) {
+        return userService.findByPhone(phone);
+    }
 }
