@@ -1,42 +1,24 @@
 package kg.attractor.jobsearch.service;
 
+import kg.attractor.jobsearch.dto.ResumeCreateDto;
 import kg.attractor.jobsearch.model.Resume;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class ResumeService {
+public interface ResumeService {
 
-    public Resume createResume(Resume resume) {
-        // создаем резюме
-        // пользователь отправляет данные
-        // мы должны сохранить
-        return resume;
-    }
+    Resume createResume(ResumeCreateDto dto);
 
-    public Optional<Resume> updateResume(Long id, Resume resume) {
-        // обновляем резюме по id
-        // ищем старое и заменяем
-        return Optional.empty();
-    }
+    Optional<Resume> updateResume(Long id, Resume resume);
 
-    public boolean deleteResume(Long id) {
-        // удаляем резюме
-        // по идее удаляется из базы
-        return false;
-    }
+    boolean deleteResume(Long id);
 
-    public List<Resume> getAllResumes() {
-        // получаем все резюме
-        // например работодатель их смотрит
-        return List.of();
-    }
+    List<Resume> getAllResumes();
 
-    public List<Resume> getResumesByCategory(String category) {
-        // фильтр резюме по категории
-        // например IT, Design и тд
-        return List.of();
-    }
+    List<Resume> getResumesByCategory(Long categoryId);
+
+    List<Resume> getResumesByApplicantId(Long applicantId);
+
+    Optional<Resume> getResumeById(Long id);
 }
