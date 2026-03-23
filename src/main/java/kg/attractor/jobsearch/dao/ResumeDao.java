@@ -25,12 +25,12 @@ public class ResumeDao {
         );
     }
 
-    public List<Resume> findByUserId(Long userId) {
-        String sql = "select * from resumes where user_id = :userId";
+    public List<Resume> findByApplicantId(Long applicantId) {
+        String sql = "select * from resumes where applicant_id = :applicantId";
 
         return jdbcTemplate.query(
                 sql,
-                new MapSqlParameterSource().addValue("userId", userId),
+                new MapSqlParameterSource().addValue("applicantId", applicantId),
                 new ResumeMapper()
         );
     }

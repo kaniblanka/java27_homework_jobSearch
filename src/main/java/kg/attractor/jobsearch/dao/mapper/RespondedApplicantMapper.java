@@ -10,13 +10,13 @@ public class RespondedApplicantMapper implements RowMapper<RespondedApplicant> {
 
     @Override
     public RespondedApplicant mapRow(ResultSet rs, int rowNum) throws SQLException {
-        RespondedApplicant r = new RespondedApplicant();
+        RespondedApplicant respondedApplicant = new RespondedApplicant();
 
-        r.setId(rs.getLong("id"));
-        r.setResumeId(rs.getLong("resume_id"));
-        r.setVacancyId(rs.getLong("vacancy_id"));
-        r.setConfirmation(rs.getBoolean("confirmation"));
+        respondedApplicant.setId(rs.getLong("id"));
+        respondedApplicant.setResumeId(rs.getLong("resume_id"));
+        respondedApplicant.setVacancyId(rs.getLong("vacancy_id"));
+        respondedApplicant.setConfirmation(rs.getBoolean("confirmation"));
 
-        return r;
+        return respondedApplicant;
     }
 }

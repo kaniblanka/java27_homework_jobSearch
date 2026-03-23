@@ -15,7 +15,6 @@ public class RespondedApplicantDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    // по резюме
     public List<RespondedApplicant> findByResumeId(Long resumeId) {
         String sql = "select * from responses where resume_id = :resumeId";
 
@@ -26,7 +25,6 @@ public class RespondedApplicantDao {
         );
     }
 
-    // по вакансии (кто откликнулся)
     public List<RespondedApplicant> findByVacancyId(Long vacancyId) {
         String sql = "select * from responses where vacancy_id = :vacancyId";
 
