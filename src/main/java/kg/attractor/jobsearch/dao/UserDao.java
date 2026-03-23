@@ -74,4 +74,21 @@ public class UserDao {
                 )
         );
     }
+
+    public boolean updateProfile(Long id, String name, String surname, Integer age,
+                                 String email, String phoneNumber, String avatar) {
+        String sql = "update users set name = :name, surname = :surname, age = :age, " +
+                "email = :email, phone_number = :phoneNumber, avatar = :avatar where id = :id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id)
+                .addValue("name", name)
+                .addValue("surname", surname)
+                .addValue("age", age)
+                .addValue("email", email)
+                .addValue("phoneNumber", phoneNumber)
+                .addValue("avatar", avatar);
+
+        return jdbcTemplate.update(sql, params) > 0;
+    }
 }
