@@ -1,6 +1,180 @@
 databaseChangeLog:
   - changeSet:
-      id: 0
-      author: admin
+      id: 001
+      author: Kanyshai
       changes:
-        -
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+              - column:
+                  name: surname
+                  type: varchar(50)
+              - column:
+                  name: age
+                  type: int
+              - column:
+                  name: email
+                  type: varchar(100)
+                  constraints:
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(50)
+              - column:
+                  name: phone_number
+                  type: varchar(20)
+              - column:
+                  name: avatar
+                  type: varchar(255)
+              - column:
+                  name: account_type
+                  type: varchar(20)
+
+  - changeSet:
+      id: 002
+      author: Kanyshai
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+
+  - changeSet:
+      id: 003
+      author: Kanyshai
+      changes:
+        - createTable:
+            tableName: resumes
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: applicant_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_resume_user
+                    references: users(id)
+              - column:
+                  name: name
+                  type: varchar(100)
+              - column:
+                  name: category_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_resume_category
+                    references: categories(id)
+              - column:
+                  name: salary
+                  type: double
+              - column:
+                  name: is_active
+                  type: boolean
+              - column:
+                  name: created_date
+                  type: timestamp
+              - column:
+                  name: update_time
+                  type: timestamp
+
+  - changeSet:
+      id: 004
+      author: Kanyshai
+      changes:
+        - createTable:
+            tableName: vacancies
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(100)
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: category_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_vacancy_category
+                    references: categories(id)
+              - column:
+                  name: salary
+                  type: double
+              - column:
+                  name: exp_from
+                  type: int
+              - column:
+                  name: exp_to
+                  type: int
+              - column:
+                  name: is_active
+                  type: boolean
+              - column:
+                  name: author_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_vacancy_user
+                    references: users(id)
+              - column:
+                  name: created_date
+                  type: timestamp
+              - column:
+                  name: update_time
+                  type: timestamp
+
+  - changeSet:
+      id: 005
+      author: Kanyshai
+      changes:
+        - createTable:
+            tableName: responses
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: resume_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_response_resume
+                    references: resumes(id)
+              - column:
+                  name: vacancy_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_response_vacancy
+                    references: vacancies(id)
+              - column:
+                  name: confirmation
+                  type: boolean
