@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 006
-      author: kanyshai
+      author: Kanyshai
       changes:
         - createTable:
             tableName: education_info
