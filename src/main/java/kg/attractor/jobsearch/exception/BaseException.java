@@ -1,9 +1,7 @@
 package kg.attractor.jobsearch.exception;
 
 public class BaseException extends Exception{
+    public BaseException(String message) {
+        super(message);
+    }
 }
-//todo какие данные приходят от пользователя
-// какие значения допустимы
-// повесить на них анотации валидации
-// часть повесить и на модел
-
