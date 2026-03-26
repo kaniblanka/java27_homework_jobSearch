@@ -2,6 +2,10 @@ package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.ResumeCreateDto;
+import kg.attractor.jobsearch.exception.CreateEntryException;
+import kg.attractor.jobsearch.exception.DeleteEntryException;
+import kg.attractor.jobsearch.exception.ResumeNotFoundException;
+import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
@@ -19,19 +23,20 @@ public class ResumeController {
     private final ResumeService resumeService;
 
     @PostMapping
-    public Resume createResume(@Valid @RequestBody ResumeCreateDto dto) {
+    public Resume createResume(@Valid @RequestBody ResumeCreateDto dto) throws CreateEntryException {
         return resumeService.createResume(dto);
     }
 
     @PutMapping("{id}")
-    public Optional<Resume> updateResume(@PathVariable Long id,
-                                         @Valid @RequestBody Resume resume) {
+    public Resume updateResume(@PathVariable Long id,
+                               @Valid @RequestBody Resume resume) throws ResumeNotFoundException, UpdateEntryException {
         return resumeService.updateResume(id, resume);
     }
 
     @DeleteMapping("{id}")
-    public HttpStatus deleteResume(@PathVariable Long id) {
-        return resumeService.deleteResume(id) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+    public HttpStatus deleteResume(@PathVariable Long id) throws ResumeNotFoundException, DeleteEntryException {
+        resumeService.deleteResume(id);
+        return HttpStatus.OK;
     }
 
     @GetMapping
@@ -40,7 +45,7 @@ public class ResumeController {
     }
 
     @GetMapping("{id}")
-    public Optional<Resume> getResumeById(@PathVariable Long id) {
+    public Resume getResumeById(@PathVariable Long id) throws ResumeNotFoundException {
         return resumeService.getResumeById(id);
     }
 

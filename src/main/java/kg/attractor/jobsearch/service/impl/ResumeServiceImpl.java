@@ -4,6 +4,10 @@ import kg.attractor.jobsearch.dao.EducationInfoDao;
 import kg.attractor.jobsearch.dao.ResumeDao;
 import kg.attractor.jobsearch.dao.WorkExperienceInfoDao;
 import kg.attractor.jobsearch.dto.ResumeCreateDto;
+import kg.attractor.jobsearch.exception.CreateEntryException;
+import kg.attractor.jobsearch.exception.DeleteEntryException;
+import kg.attractor.jobsearch.exception.ResumeNotFoundException;
+import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
@@ -14,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -26,67 +29,81 @@ public class ResumeServiceImpl implements ResumeService {
     private final WorkExperienceInfoDao workExperienceInfoDao;
 
     @Override
-    public Resume createResume(ResumeCreateDto dto) {
-        Resume resume = new Resume();
-        resume.setApplicantId(dto.getApplicantId());
-        resume.setName(dto.getName());
-        resume.setCategoryId(dto.getCategoryId());
-        resume.setSalary(dto.getSalary());
-        resume.setIsActive(dto.getIsActive());
-        resume.setCreatedDate(LocalDateTime.now());
-        resume.setUpdateTime(LocalDateTime.now());
+    public Resume createResume(ResumeCreateDto dto) throws CreateEntryException {
+        try {
+            Resume resume = new Resume();
+            resume.setApplicantId(dto.getApplicantId());
+            resume.setName(dto.getName());
+            resume.setCategoryId(dto.getCategoryId());
+            resume.setSalary(dto.getSalary());
+            resume.setIsActive(dto.getIsActive());
+            resume.setCreatedDate(LocalDateTime.now());
+            resume.setUpdateTime(LocalDateTime.now());
 
-        Long resumeId = resumeDao.create(resume);
-        resume.setId(resumeId);
+            Long resumeId = resumeDao.create(resume);
 
-        log.debug("Created resume with id = {}", resumeId);
-
-        if (dto.getEducationInfoList() != null) {
-            for (EducationInfo educationInfo : dto.getEducationInfoList()) {
-                educationInfo.setResumeId(resumeId);
-                educationInfoDao.create(educationInfo);
+            if (resumeId == null) {
+                throw new CreateEntryException("Resume was not created");
             }
-        }
 
-        if (dto.getWorkExperienceInfoList() != null) {
-            for (WorkExperienceInfo workExperienceInfo : dto.getWorkExperienceInfoList()) {
-                workExperienceInfo.setResumeId(resumeId);
-                workExperienceInfoDao.create(workExperienceInfo);
+            resume.setId(resumeId);
+
+            log.debug("Created resume with id = {}", resumeId);
+
+            if (dto.getEducationInfoList() != null) {
+                for (EducationInfo educationInfo : dto.getEducationInfoList()) {
+                    educationInfo.setResumeId(resumeId);
+                    educationInfoDao.create(educationInfo);
+                }
             }
-        }
 
-        return resume;
+            if (dto.getWorkExperienceInfoList() != null) {
+                for (WorkExperienceInfo workExperienceInfo : dto.getWorkExperienceInfoList()) {
+                    workExperienceInfo.setResumeId(resumeId);
+                    workExperienceInfoDao.create(workExperienceInfo);
+                }
+            }
+
+            return resume;
+        } catch (CreateEntryException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CreateEntryException("Resume was not created");
+        }
     }
 
     @Override
-    public Optional<Resume> updateResume(Long id, Resume resume) {
+    public Resume updateResume(Long id, Resume resume) throws ResumeNotFoundException, UpdateEntryException {
+        resumeDao.findById(id).orElseThrow(ResumeNotFoundException::new);
+
         resume.setUpdateTime(LocalDateTime.now());
 
         boolean updated = resumeDao.update(id, resume);
 
-        if (updated) {
-            log.debug("Updated resume with id = {}", id);
-            return resumeDao.findById(id);
+        if (!updated) {
+            throw new UpdateEntryException("Resume was not updated");
         }
 
-        log.debug("Resume with id = {} not found for update", id);
-        return Optional.empty();
+        log.debug("Updated resume with id = {}", id);
+
+        return resumeDao.findById(id)
+                .orElseThrow(ResumeNotFoundException::new);
     }
 
     @Override
-    public boolean deleteResume(Long id) {
+    public void deleteResume(Long id) throws ResumeNotFoundException, DeleteEntryException {
+        resumeDao.findById(id).orElseThrow(ResumeNotFoundException::new);
+
         educationInfoDao.deleteByResumeId(id);
         workExperienceInfoDao.deleteByResumeId(id);
 
         boolean deleted = resumeDao.deleteById(id);
 
-        if (deleted) {
-            log.debug("Deleted resume with id = {}", id);
-        } else {
-            log.debug("Resume with id = {} not found for delete", id);
+        if (!deleted) {
+            throw new DeleteEntryException("Resume was not deleted");
         }
 
-        return deleted;
+        log.debug("Deleted resume with id = {}", id);
     }
 
     @Override
@@ -105,7 +122,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Optional<Resume> getResumeById(Long id) {
-        return resumeDao.findById(id);
+    public Resume getResumeById(Long id) throws ResumeNotFoundException {
+        return resumeDao.findById(id)
+                .orElseThrow(ResumeNotFoundException::new);
     }
 }

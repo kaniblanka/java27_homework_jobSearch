@@ -1,21 +1,18 @@
 package kg.attractor.jobsearch.service;
 
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.exception.CreateEntryException;
+import kg.attractor.jobsearch.exception.DeleteEntryException;
+import kg.attractor.jobsearch.exception.UpdateEntryException;
+import kg.attractor.jobsearch.exception.VacancyNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface VacancyService {
-
-    VacancyDto createVacancy(VacancyDto vacancyDto);
-
-    Optional<VacancyDto> updateVacancy(Long id, VacancyDto vacancyDto);
-
-    boolean deleteVacancy(Long id);
-
+    VacancyDto createVacancy(VacancyDto vacancyDto) throws CreateEntryException;
+    VacancyDto updateVacancy(Long id, VacancyDto vacancyDto) throws VacancyNotFoundException, UpdateEntryException;
+    void deleteVacancy(Long id) throws VacancyNotFoundException, DeleteEntryException;
     List<VacancyDto> getAllActiveVacancies();
-
     List<VacancyDto> getVacanciesByCategory(Long categoryId);
-
-    Optional<VacancyDto> getVacancyById(Long id);
+    VacancyDto getVacancyById(Long id) throws VacancyNotFoundException;
 }

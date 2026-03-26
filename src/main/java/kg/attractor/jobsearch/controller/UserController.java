@@ -3,6 +3,8 @@ package kg.attractor.jobsearch.controller;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
+import kg.attractor.jobsearch.exception.UpdateEntryException;
+import kg.attractor.jobsearch.exception.UserNotFoundException;
 import kg.attractor.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,12 +25,12 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public UserDto findById(@PathVariable Long id) {
+    public UserDto findById(@PathVariable Long id) throws UserNotFoundException {
         return userService.findById(id);
     }
 
     @GetMapping("email")
-    public UserDto findByEmail(@RequestParam String email) {
+    public UserDto findByEmail(@RequestParam String email) throws UserNotFoundException {
         return userService.findByEmail(email);
     }
 
@@ -43,15 +45,14 @@ public class UserController {
     }
 
     @GetMapping("by-phone")
-    public UserDto findByPhone(@RequestParam String phone) {
+    public UserDto findByPhone(@RequestParam String phone) throws UserNotFoundException {
         return userService.findByPhone(phone);
     }
 
     @PutMapping("{id}")
     public HttpStatus updateProfile(@PathVariable Long id,
-                                    @Valid @RequestBody UserEditDto userEditDto) {
-        return userService.updateProfile(id, userEditDto)
-                ? HttpStatus.OK
-                : HttpStatus.NOT_FOUND;
+                                    @Valid @RequestBody UserEditDto userEditDto) throws UserNotFoundException, UpdateEntryException {
+        userService.updateProfile(id, userEditDto);
+        return HttpStatus.OK;
     }
 }

@@ -3,6 +3,7 @@ package kg.attractor.jobsearch.service.impl;
 import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
+import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.exception.UserNotFoundException;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto findById(Long id) {
+    public UserDto findById(Long id) throws UserNotFoundException {
         return mapToDto(
                 userDao.findById(id)
                         .orElseThrow(UserNotFoundException::new)
@@ -47,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto findByEmail(String email) {
+    public UserDto findByEmail(String email) throws UserNotFoundException {
         return mapToDto(
                 userDao.findByEmail(email)
                         .orElseThrow(UserNotFoundException::new)
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto findByPhone(String phone) {
+    public UserDto findByPhone(String phone) throws UserNotFoundException {
         return mapToDto(
                 userDao.findByPhone(phone)
                         .orElseThrow(UserNotFoundException::new)
@@ -76,8 +77,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateProfile(Long id, UserEditDto userEditDto) {
-        return userDao.updateProfile(
+    public void updateProfile(Long id, UserEditDto userEditDto) throws UserNotFoundException, UpdateEntryException {
+        userDao.findById(id).orElseThrow(UserNotFoundException::new);
+
+        boolean updated = userDao.updateProfile(
                 id,
                 userEditDto.getName(),
                 userEditDto.getSurname(),
@@ -86,5 +89,9 @@ public class UserServiceImpl implements UserService {
                 userEditDto.getPhoneNumber(),
                 userEditDto.getAvatar()
         );
+
+        if (!updated) {
+            throw new UpdateEntryException("User profile was not updated");
+        }
     }
 }

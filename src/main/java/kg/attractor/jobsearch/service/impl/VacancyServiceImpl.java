@@ -2,6 +2,10 @@ package kg.attractor.jobsearch.service.impl;
 
 import kg.attractor.jobsearch.dao.VacancyDao;
 import kg.attractor.jobsearch.dto.VacancyDto;
+import kg.attractor.jobsearch.exception.CreateEntryException;
+import kg.attractor.jobsearch.exception.DeleteEntryException;
+import kg.attractor.jobsearch.exception.UpdateEntryException;
+import kg.attractor.jobsearch.exception.VacancyNotFoundException;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,32 +53,47 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public VacancyDto createVacancy(VacancyDto vacancyDto) {
-        Vacancy vacancy = mapToModel(vacancyDto);
-        vacancy.setCreatedDate(LocalDateTime.now());
-        vacancy.setUpdateTime(LocalDateTime.now());
+    public VacancyDto createVacancy(VacancyDto vacancyDto) throws CreateEntryException {
+        try {
+            Vacancy vacancy = mapToModel(vacancyDto);
+            vacancy.setCreatedDate(LocalDateTime.now());
+            vacancy.setUpdateTime(LocalDateTime.now());
 
-        vacancyDao.create(vacancy);
-        return mapToDto(vacancy);
+            vacancyDao.create(vacancy);
+
+            return mapToDto(vacancy);
+        } catch (Exception e) {
+            throw new CreateEntryException("Vacancy was not created");
+        }
     }
 
     @Override
-    public Optional<VacancyDto> updateVacancy(Long id, VacancyDto vacancyDto) {
+    public VacancyDto updateVacancy(Long id, VacancyDto vacancyDto) throws VacancyNotFoundException, UpdateEntryException {
+        vacancyDao.findById(id).orElseThrow(VacancyNotFoundException::new);
+
         Vacancy vacancy = mapToModel(vacancyDto);
         vacancy.setUpdateTime(LocalDateTime.now());
 
         boolean updated = vacancyDao.update(id, vacancy);
 
-        if (updated) {
-            return vacancyDao.findById(id).map(this::mapToDto);
+        if (!updated) {
+            throw new UpdateEntryException("Vacancy was not updated");
         }
 
-        return Optional.empty();
+        return vacancyDao.findById(id)
+                .map(this::mapToDto)
+                .orElseThrow(VacancyNotFoundException::new);
     }
 
     @Override
-    public boolean deleteVacancy(Long id) {
-        return vacancyDao.deleteById(id);
+    public void deleteVacancy(Long id) throws VacancyNotFoundException, DeleteEntryException {
+        vacancyDao.findById(id).orElseThrow(VacancyNotFoundException::new);
+
+        boolean deleted = vacancyDao.deleteById(id);
+
+        if (!deleted) {
+            throw new DeleteEntryException("Vacancy was not deleted");
+        }
     }
 
     @Override
@@ -95,7 +113,9 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Optional<VacancyDto> getVacancyById(Long id) {
-        return vacancyDao.findById(id).map(this::mapToDto);
+    public VacancyDto getVacancyById(Long id) throws VacancyNotFoundException {
+        return vacancyDao.findById(id)
+                .map(this::mapToDto)
+                .orElseThrow(VacancyNotFoundException::new);
     }
 }
