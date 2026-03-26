@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.ResumeCreateDto;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -18,13 +19,13 @@ public class ResumeController {
     private final ResumeService resumeService;
 
     @PostMapping
-    public Resume createResume(@RequestBody ResumeCreateDto dto) {
+    public Resume createResume(@Valid @RequestBody ResumeCreateDto dto) {
         return resumeService.createResume(dto);
     }
 
     @PutMapping("{id}")
     public Optional<Resume> updateResume(@PathVariable Long id,
-                                         @RequestBody Resume resume) {
+                                         @Valid @RequestBody Resume resume) {
         return resumeService.updateResume(id, resume);
     }
 

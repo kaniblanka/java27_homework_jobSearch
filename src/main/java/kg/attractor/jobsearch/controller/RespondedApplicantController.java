@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.validation.Valid;
 import kg.attractor.jobsearch.model.RespondedApplicant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class RespondedApplicantController {
 
     @PostMapping
-    public HttpStatus respondToVacancy(@RequestBody RespondedApplicant respondedApplicant) {
+    public HttpStatus respondToVacancy(@Valid @RequestBody RespondedApplicant respondedApplicant) {
         return HttpStatus.OK;
     }
 

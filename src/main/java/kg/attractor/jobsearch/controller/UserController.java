@@ -1,5 +1,6 @@
 package kg.attractor.jobsearch.controller;
 
+import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
 import kg.attractor.jobsearch.service.UserService;
@@ -48,7 +49,7 @@ public class UserController {
 
     @PutMapping("{id}")
     public HttpStatus updateProfile(@PathVariable Long id,
-                                    @RequestBody UserEditDto userEditDto) {
+                                    @Valid @RequestBody UserEditDto userEditDto) {
         return userService.updateProfile(id, userEditDto)
                 ? HttpStatus.OK
                 : HttpStatus.NOT_FOUND;
