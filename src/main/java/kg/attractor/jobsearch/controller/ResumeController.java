@@ -2,6 +2,7 @@ package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.ResumeCreateDto;
+import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.DeleteEntryException;
 import kg.attractor.jobsearch.exception.ResumeNotFoundException;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("resumes")
@@ -23,39 +23,41 @@ public class ResumeController {
     private final ResumeService resumeService;
 
     @PostMapping
-    public Resume createResume(@Valid @RequestBody ResumeCreateDto dto) throws CreateEntryException {
+    public ResumeDto createResume(@Valid @RequestBody ResumeCreateDto dto) throws CreateEntryException {
         return resumeService.createResume(dto);
     }
 
     @PutMapping("{id}")
-    public Resume updateResume(@PathVariable Long id,
-                               @Valid @RequestBody Resume resume) throws ResumeNotFoundException, UpdateEntryException {
+    public ResumeDto updateResume(@PathVariable Long id,
+                                  @Valid @RequestBody Resume resume)
+            throws ResumeNotFoundException, UpdateEntryException {
         return resumeService.updateResume(id, resume);
     }
 
     @DeleteMapping("{id}")
-    public HttpStatus deleteResume(@PathVariable Long id) throws ResumeNotFoundException, DeleteEntryException {
+    public HttpStatus deleteResume(@PathVariable Long id)
+            throws ResumeNotFoundException, DeleteEntryException {
         resumeService.deleteResume(id);
         return HttpStatus.OK;
     }
 
     @GetMapping
-    public List<Resume> getAllResumes() {
+    public List<ResumeDto> getAllResumes() {
         return resumeService.getAllResumes();
     }
 
     @GetMapping("{id}")
-    public Resume getResumeById(@PathVariable Long id) throws ResumeNotFoundException {
+    public ResumeDto getResumeById(@PathVariable Long id) throws ResumeNotFoundException {
         return resumeService.getResumeById(id);
     }
 
     @GetMapping("category/{categoryId}")
-    public List<Resume> getResumesByCategory(@PathVariable Long categoryId) {
+    public List<ResumeDto> getResumesByCategory(@PathVariable Long categoryId) {
         return resumeService.getResumesByCategory(categoryId);
     }
 
     @GetMapping("applicant/{applicantId}")
-    public List<Resume> getResumesByApplicantId(@PathVariable Long applicantId) {
+    public List<ResumeDto> getResumesByApplicantId(@PathVariable Long applicantId) {
         return resumeService.getResumesByApplicantId(applicantId);
     }
 }

@@ -4,6 +4,7 @@ import kg.attractor.jobsearch.dao.EducationInfoDao;
 import kg.attractor.jobsearch.dao.ResumeDao;
 import kg.attractor.jobsearch.dao.WorkExperienceInfoDao;
 import kg.attractor.jobsearch.dto.ResumeCreateDto;
+import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.DeleteEntryException;
 import kg.attractor.jobsearch.exception.ResumeNotFoundException;
@@ -28,8 +29,21 @@ public class ResumeServiceImpl implements ResumeService {
     private final EducationInfoDao educationInfoDao;
     private final WorkExperienceInfoDao workExperienceInfoDao;
 
+    private ResumeDto mapToDto(Resume resume) {
+        return new ResumeDto(
+                resume.getId(),
+                resume.getApplicantId(),
+                resume.getName(),
+                resume.getCategoryId(),
+                resume.getSalary(),
+                resume.getIsActive(),
+                resume.getCreatedDate(),
+                resume.getUpdateTime()
+        );
+    }
+
     @Override
-    public Resume createResume(ResumeCreateDto dto) throws CreateEntryException {
+    public ResumeDto createResume(ResumeCreateDto dto) throws CreateEntryException {
         try {
             Resume resume = new Resume();
             resume.setApplicantId(dto.getApplicantId());
@@ -64,7 +78,7 @@ public class ResumeServiceImpl implements ResumeService {
                 }
             }
 
-            return resume;
+            return mapToDto(resume);
         } catch (CreateEntryException e) {
             throw e;
         } catch (Exception e) {
@@ -73,7 +87,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Resume updateResume(Long id, Resume resume) throws ResumeNotFoundException, UpdateEntryException {
+    public ResumeDto updateResume(Long id, Resume resume) throws ResumeNotFoundException, UpdateEntryException {
         resumeDao.findById(id).orElseThrow(ResumeNotFoundException::new);
 
         resume.setUpdateTime(LocalDateTime.now());
@@ -86,8 +100,10 @@ public class ResumeServiceImpl implements ResumeService {
 
         log.debug("Updated resume with id = {}", id);
 
-        return resumeDao.findById(id)
+        Resume updatedResume = resumeDao.findById(id)
                 .orElseThrow(ResumeNotFoundException::new);
+
+        return mapToDto(updatedResume);
     }
 
     @Override
@@ -107,23 +123,34 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<Resume> getAllResumes() {
-        return resumeDao.findAll();
+    public List<ResumeDto> getAllResumes() {
+        return resumeDao.findAll()
+                .stream()
+                .map(this::mapToDto)
+                .toList();
     }
 
     @Override
-    public List<Resume> getResumesByCategory(Long categoryId) {
-        return resumeDao.findByCategory(categoryId);
+    public List<ResumeDto> getResumesByCategory(Long categoryId) {
+        return resumeDao.findByCategory(categoryId)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
     }
 
     @Override
-    public List<Resume> getResumesByApplicantId(Long applicantId) {
-        return resumeDao.findByApplicantId(applicantId);
+    public List<ResumeDto> getResumesByApplicantId(Long applicantId) {
+        return resumeDao.findByApplicantId(applicantId)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
     }
 
     @Override
-    public Resume getResumeById(Long id) throws ResumeNotFoundException {
-        return resumeDao.findById(id)
+    public ResumeDto getResumeById(Long id) throws ResumeNotFoundException {
+        Resume resume = resumeDao.findById(id)
                 .orElseThrow(ResumeNotFoundException::new);
+
+        return mapToDto(resume);
     }
 }
