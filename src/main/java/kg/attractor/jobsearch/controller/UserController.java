@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.UserCreateDto;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
 import kg.attractor.jobsearch.exception.CreateEntryException;
@@ -19,6 +20,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto createUser(@Valid @RequestBody UserCreateDto userCreateDto) throws CreateEntryException {
+        return userService.createUser(userCreateDto);
+    }
 
     @GetMapping
     public List<UserDto> getAllUsers() {
@@ -55,11 +62,5 @@ public class UserController {
                                     @Valid @RequestBody UserEditDto userEditDto) throws UserNotFoundException, UpdateEntryException {
         userService.updateProfile(id, userEditDto);
         return HttpStatus.OK;
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) throws CreateEntryException {
-        return userService.createUser(userDto);
     }
 }

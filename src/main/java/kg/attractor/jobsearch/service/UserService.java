@@ -1,5 +1,7 @@
 package kg.attractor.jobsearch.service;
 
+import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.UserCreateDto;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
 import kg.attractor.jobsearch.exception.CreateEntryException;
@@ -16,5 +18,5 @@ public interface UserService {
     List<UserDto> findByName(String name);
     UserDto findByPhone(String phone) throws UserNotFoundException;
     void updateProfile(Long id, UserEditDto userEditDto) throws UserNotFoundException, UpdateEntryException;
-    UserDto createUser(UserCreateDto userCreateDto) throws CreateEntryException;
+    UserDto createUser(@Valid UserCreateDto userCreateDto) throws CreateEntryException;
 }
