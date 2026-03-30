@@ -6,9 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -75,24 +78,7 @@ public class UserDao {
         );
     }
 
-    public boolean updateProfile(Long id, String name, String surname, Integer age,
-                                 String email, String phoneNumber, String avatar) {
-        String sql = "update users set name = :name, surname = :surname, age = :age, " +
-                "email = :email, phone_number = :phoneNumber, avatar = :avatar where id = :id";
-
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("id", id)
-                .addValue("name", name)
-                .addValue("surname", surname)
-                .addValue("age", age)
-                .addValue("email", email)
-                .addValue("phoneNumber", phoneNumber)
-                .addValue("avatar", avatar);
-
-        return jdbcTemplate.update(sql, params) > 0;
-    }
-
-    public boolean create(User user) {
+    public Long create(User user) {
         String sql = "insert into users(name, surname, age, email, password, phone_number, avatar, account_type, enabled) " +
                 "values (:name, :surname, :age, :email, :password, :phoneNumber, :avatar, :accountType, :enabled)";
 
@@ -106,6 +92,38 @@ public class UserDao {
                 .addValue("avatar", user.getAvatar())
                 .addValue("accountType", user.getAccountType())
                 .addValue("enabled", user.getEnabled());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(sql, params, keyHolder);
+
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
+
+    public void addAuthorityToUser(Long userId, String authority) {
+        String sql = "insert into user_authorities(user_id, authority_id) " +
+                "values (:userId, (select id from authorities where authority = :authority))";
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("authority", authority);
+
+        jdbcTemplate.update(sql, params);
+    }
+
+    public boolean updateProfile(Long id, String name, String surname, Integer age,
+                                 String email, String phoneNumber, String avatar) {
+        String sql = "update users set name = :name, surname = :surname, age = :age, " +
+                "email = :email, phone_number = :phoneNumber, avatar = :avatar where id = :id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id)
+                .addValue("name", name)
+                .addValue("surname", surname)
+                .addValue("age", age)
+                .addValue("email", email)
+                .addValue("phoneNumber", phoneNumber)
+                .addValue("avatar", avatar);
 
         return jdbcTemplate.update(sql, params) > 0;
     }
