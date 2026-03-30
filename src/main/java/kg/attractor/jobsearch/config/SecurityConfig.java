@@ -62,8 +62,28 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("READ")
-                        .requestMatchers(HttpMethod.POST, "/users/**").hasAnyAuthority("WRITE")
+
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/vacancies/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/resumes/**").hasAuthority("CREATE_RESUME")
+                        .requestMatchers(HttpMethod.PUT, "/resumes/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/resumes/**").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/vacancies/**").hasAuthority("CREATE_VACANCY")
+                        .requestMatchers(HttpMethod.PUT, "/vacancies/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/vacancies/**").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/responses/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/responses/**").authenticated()
+
+                        .requestMatchers(HttpMethod.PUT, "/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/images/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+
                         .anyRequest().permitAll()
                 );
 

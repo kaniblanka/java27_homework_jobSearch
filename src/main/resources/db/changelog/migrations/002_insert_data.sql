@@ -29,11 +29,10 @@ VALUES
 
 INSERT INTO authorities(authority)
 VALUES
-    ('READ'),
-    ('WRITE');
+    ('CREATE_RESUME'),
+    ('CREATE_VACANCY');
 
 INSERT INTO user_authorities(user_id, authority_id)
 VALUES
     (1, 1),
-    (2, 1),
     (2, 2);
