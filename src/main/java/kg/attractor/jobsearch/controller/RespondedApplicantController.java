@@ -2,22 +2,28 @@ package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.model.RespondedApplicant;
+import kg.attractor.jobsearch.service.RespondedApplicantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("responses")
 @RequiredArgsConstructor
 public class RespondedApplicantController {
 
+    private final RespondedApplicantService respondedApplicantService;
+
     @PostMapping
-    public HttpStatus respondToVacancy(@Valid @RequestBody RespondedApplicant respondedApplicant) {
-        return HttpStatus.OK;
+    @ResponseStatus(HttpStatus.CREATED)
+    public RespondedApplicant respondToVacancy(@Valid @RequestBody RespondedApplicant respondedApplicant) {
+        return respondedApplicantService.respondToVacancy(respondedApplicant);
     }
 
     @GetMapping("vacancy/{vacancyId}")
-    public HttpStatus getRespondedApplicantsByVacancy(@PathVariable Long vacancyId) {
-        return HttpStatus.OK;
+    public List<RespondedApplicant> getRespondedApplicantsByVacancy(@PathVariable Long vacancyId) {
+        return respondedApplicantService.getRespondedApplicantsByVacancyId(vacancyId);
     }
 }
