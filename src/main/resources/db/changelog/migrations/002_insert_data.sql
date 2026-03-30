@@ -1,7 +1,12 @@
-INSERT INTO users(name, surname, age, email, password, phone_number, avatar, account_type)
+INSERT INTO users(name, surname, age, email, password, phone_number, avatar, account_type, enabled)
 VALUES
-    ('Aida', 'Sydykova', 22, 'aida@mail.com', '1234', '0700111222', null, 'CANDIDATE'),
-    ('Bek', 'Nurbekov', 30, 'bek@mail.com', '1234', '0700222333', null, 'EMPLOYER');
+    ('Aida', 'Sydykova', 22, 'aida@mail.com',
+     '$2a$12$WB2YUbFcCN0tm44SBcKUjua9yiFBsfB3vW02IjuwzY7HGtlQIKzy2',
+     '0700111222', null, 'CANDIDATE', true),
+
+    ('Bek', 'Nurbekov', 30, 'bek@mail.com',
+     '$2a$12$WB2YUbFcCN0tm44SBcKUjua9yiFBsfB3vW02IjuwzY7HGtlQIKzy2',
+     '0700222333', null, 'EMPLOYER', true);
 
 INSERT INTO categories(name)
 VALUES
@@ -21,3 +26,14 @@ VALUES
 INSERT INTO responses(resume_id, vacancy_id, confirmation)
 VALUES
     (1, 1, true);
+
+INSERT INTO authorities(authority)
+VALUES
+    ('READ'),
+    ('WRITE');
+
+INSERT INTO user_authorities(user_id, authority_id)
+VALUES
+    (1, 1),
+    (2, 1),
+    (2, 2);
