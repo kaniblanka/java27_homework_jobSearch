@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009
+      author: Kanyshai
+      changes:
+        - createTable:
+            tableName: user_authorities
+            columns:
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_authorities_user
+                    references: users(id)
+              - column:
+                  name: authority_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_authorities_authority
+                    references: authorities(id)
+
+        - addPrimaryKey:
+            tableName: user_authorities
+            columnNames: user_id, authority_id
+            constraintName: pk_user_authorities
