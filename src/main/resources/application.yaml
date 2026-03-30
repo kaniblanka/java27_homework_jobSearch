@@ -4,6 +4,7 @@ server:
 spring:
   config:
     import: optional:file:.env[.properties]
+
   application:
     name: jobsearch
 
@@ -25,5 +26,6 @@ logging:
     com.zaxxer.hikari: error
     org.apache.tomcat: error
     liquibase: error
+    org.springframework.security: debug
   pattern:
     file: "%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"
