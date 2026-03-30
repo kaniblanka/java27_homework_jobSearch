@@ -56,6 +56,8 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDto createVacancy(VacancyDto vacancyDto) throws CreateEntryException {
+        log.info("Creating vacancy with name='{}'", vacancyDto.getName());
+
         try {
             Vacancy vacancy = mapToModel(vacancyDto);
             vacancy.setCreatedDate(LocalDateTime.now());
@@ -63,14 +65,18 @@ public class VacancyServiceImpl implements VacancyService {
 
             vacancyDao.create(vacancy);
 
+            log.info("Vacancy created successfully with name='{}'", vacancyDto.getName());
             return mapToDto(vacancy);
         } catch (Exception e) {
+            log.error("Error while creating vacancy with name='{}'", vacancyDto.getName(), e);
             throw new CreateEntryException("Vacancy was not created");
         }
     }
 
     @Override
     public VacancyDto updateVacancy(Long id, VacancyDto vacancyDto) throws VacancyNotFoundException, UpdateEntryException {
+        log.info("Updating vacancy with id={}", id);
+
         vacancyDao.findById(id).orElseThrow(VacancyNotFoundException::new);
 
         Vacancy vacancy = mapToModel(vacancyDto);
@@ -79,8 +85,11 @@ public class VacancyServiceImpl implements VacancyService {
         boolean updated = vacancyDao.update(id, vacancy);
 
         if (!updated) {
+            log.error("Vacancy was not updated, id={}", id);
             throw new UpdateEntryException("Vacancy was not updated");
         }
+
+        log.info("Vacancy updated successfully, id={}", id);
 
         return vacancyDao.findById(id)
                 .map(this::mapToDto)
@@ -89,42 +98,55 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public void deleteVacancy(Long id) throws VacancyNotFoundException, DeleteEntryException {
+        log.info("Deleting vacancy with id={}", id);
+
         vacancyDao.findById(id).orElseThrow(VacancyNotFoundException::new);
 
         boolean deleted = vacancyDao.deleteById(id);
 
         if (!deleted) {
+            log.error("Vacancy was not deleted, id={}", id);
             throw new DeleteEntryException("Vacancy was not deleted");
         }
+
+        log.info("Vacancy deleted successfully, id={}", id);
     }
 
     @Override
     public List<VacancyDto> getAllActiveVacancies() {
-        return vacancyDao.findActive()
+        log.info("Getting all active vacancies");
+
+        List<VacancyDto> vacancies = vacancyDao.findActive()
                 .stream()
                 .map(this::mapToDto)
                 .toList();
+
+        log.info("Found {} active vacancies", vacancies.size());
+        return vacancies;
     }
 
     @Override
     public List<VacancyDto> getVacanciesByCategory(Long categoryId) {
-        return vacancyDao.findByCategory(categoryId)
+        log.info("Getting vacancies by categoryId={}", categoryId);
+
+        List<VacancyDto> vacancies = vacancyDao.findByCategory(categoryId)
                 .stream()
                 .map(this::mapToDto)
                 .toList();
+
+        log.info("Found {} vacancies for categoryId={}", vacancies.size(), categoryId);
+        return vacancies;
     }
 
     @Override
     public VacancyDto getVacancyById(Long id) throws VacancyNotFoundException {
-        return vacancyDao.findById(id)
+        log.info("Getting vacancy by id={}", id);
+
+        VacancyDto vacancyDto = vacancyDao.findById(id)
                 .map(this::mapToDto)
                 .orElseThrow(VacancyNotFoundException::new);
-    }
 
-    log.info("Creating vacancy");
-log.info("Updating vacancy with id: {}", id);
-log.info("Deleting vacancy with id: {}", id);
-log.info("Getting all active vacancies");
-log.info("Getting vacancies by category id: {}", categoryId);
-log.info("Getting vacancy by id: {}", id);
+        log.info("Vacancy found, id={}", id);
+        return vacancyDto;
+    }
 }
