@@ -9,11 +9,13 @@ import kg.attractor.jobsearch.exception.VacancyNotFoundException;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
@@ -118,4 +120,11 @@ public class VacancyServiceImpl implements VacancyService {
                 .map(this::mapToDto)
                 .orElseThrow(VacancyNotFoundException::new);
     }
+
+    log.info("Creating vacancy");
+log.info("Updating vacancy with id: {}", id);
+log.info("Deleting vacancy with id: {}", id);
+log.info("Getting all active vacancies");
+log.info("Getting vacancies by category id: {}", categoryId);
+log.info("Getting vacancy by id: {}", id);
 }

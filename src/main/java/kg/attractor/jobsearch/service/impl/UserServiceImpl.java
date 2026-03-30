@@ -8,10 +8,12 @@ import kg.attractor.jobsearch.exception.UserNotFoundException;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -94,4 +96,9 @@ public class UserServiceImpl implements UserService {
             throw new UpdateEntryException("User profile was not updated");
         }
     }
+
+    log.info("Getting all users");
+log.info("Getting user by id: {}", id);
+log.info("Getting user by email: {}", email);
+log.info("Updating user profile, id: {}", id);
 }

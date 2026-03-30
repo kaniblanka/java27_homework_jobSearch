@@ -91,4 +91,22 @@ public class UserDao {
 
         return jdbcTemplate.update(sql, params) > 0;
     }
+
+    public boolean create(User user) {
+        String sql = "insert into users(name, surname, age, email, password, phone_number, avatar, account_type, enabled) " +
+                "values (:name, :surname, :age, :email, :password, :phoneNumber, :avatar, :accountType, :enabled)";
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("name", user.getName())
+                .addValue("surname", user.getSurname())
+                .addValue("age", user.getAge())
+                .addValue("email", user.getEmail())
+                .addValue("password", user.getPassword())
+                .addValue("phoneNumber", user.getPhoneNumber())
+                .addValue("avatar", user.getAvatar())
+                .addValue("accountType", user.getAccountType())
+                .addValue("enabled", user.getEnabled());
+
+        return jdbcTemplate.update(sql, params) > 0;
+    }
 }

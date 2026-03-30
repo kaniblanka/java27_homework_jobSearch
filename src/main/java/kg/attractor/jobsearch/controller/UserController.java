@@ -3,6 +3,7 @@ package kg.attractor.jobsearch.controller;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
+import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.exception.UserNotFoundException;
 import kg.attractor.jobsearch.service.UserService;
@@ -54,5 +55,11 @@ public class UserController {
                                     @Valid @RequestBody UserEditDto userEditDto) throws UserNotFoundException, UpdateEntryException {
         userService.updateProfile(id, userEditDto);
         return HttpStatus.OK;
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) throws CreateEntryException {
+        return userService.createUser(userDto);
     }
 }
