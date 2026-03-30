@@ -29,7 +29,7 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: password
-                  type: varchar(50)
+                  type: varchar(255)
               - column:
                   name: phone_number
                   type: varchar(20)
@@ -39,6 +39,12 @@ databaseChangeLog:
               - column:
                   name: account_type
                   type: varchar(20)
+              - column:
+                  name: enabled
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
 
   - changeSet:
       id: 002
