@@ -36,15 +36,15 @@ public class SecurityConfig {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) {
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         String userQuery = "select email, password, enabled " +
                 "from users " +
                 "where email = ?";
 
         String authQuery = "select u.email, a.authority " +
-                "from authorities a " +
-                "         inner join user_authorities ua on a.id = ua.authority_id " +
-                "         inner join users u on ua.user_id = u.id " +
+                "from users u " +
+                "inner join user_authorities ua on u.id = ua.user_id " +
+                "inner join authorities a on ua.authority_id = a.id " +
                 "where u.email = ?";
 
         auth.jdbcAuthentication()
@@ -62,7 +62,8 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.GET, "/users/**").fullyAuthenticated()
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("READ")
+                        .requestMatchers(HttpMethod.POST, "/users/**").hasAnyAuthority("WRITE")
                         .anyRequest().permitAll()
                 );
 
