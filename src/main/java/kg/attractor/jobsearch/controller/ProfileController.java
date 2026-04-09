@@ -5,6 +5,7 @@ import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.exception.UserNotFoundException;
+import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class ProfileController {
 
+    private final ResumeService resumeService;
     private final UserService userService;
     private final VacancyService vacancyService;
 
@@ -71,5 +73,15 @@ public class ProfileController {
         model.addAttribute("vacancies", vacancyService.getVacanciesByAuthorId(user.getId()));
 
         return "vacancies/my-vacancies";
+    }
+
+    @GetMapping("resumes")
+    public String myResumesPage(Model model, Principal principal) throws UserNotFoundException {
+        UserDto user = userService.findByEmail(principal.getName());
+
+        model.addAttribute("user", user);
+        model.addAttribute("resumes", resumeService.getResumesByApplicantId(user.getId()));
+
+        return "resumes/my-resumes";
     }
 }

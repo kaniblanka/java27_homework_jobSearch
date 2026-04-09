@@ -31,7 +31,7 @@ public class EmployerVacancyController {
     @GetMapping("create")
     public String createVacancyPage(Model model) {
         model.addAttribute("vacancyCreateWebDto", new VacancyCreateWebDto());
-        return "vacancies/create";
+        return "vacancies/create-vacancy";
     }
 
     @PostMapping("create")
@@ -42,7 +42,7 @@ public class EmployerVacancyController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("vacancyCreateWebDto", vacancyCreateWebDto);
-            return "vacancies/create";
+            return "vacancies/create-vacancy";
         }
 
         UserDto currentUser = userService.findByEmail(principal.getName());
