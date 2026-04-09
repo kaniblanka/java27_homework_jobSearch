@@ -31,7 +31,8 @@
                         <a href="/profile/edit" class="btn btn-dark me-2">Редактировать профиль</a>
 
                         <#if user.accountType == "EMPLOYER">
-                            <a href="/profile/vacancies" class="btn btn-outline-secondary">Мои вакансии</a>
+                            <a href="/profile/vacancies" class="btn btn-outline-secondary me-2">Мои вакансии</a>
+                            <a href="/employer/vacancies/create" class="btn btn-success">Создать вакансию</a>
                         </#if>
 
                         <#if user.accountType == "CANDIDATE">
