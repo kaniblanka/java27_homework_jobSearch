@@ -1,6 +1,6 @@
 <#macro layout>
     <!doctype html>
-    <html lang="en">
+    <html lang="ru">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport"
@@ -22,7 +22,8 @@
         <div class="container">
             <a class="navbar-brand" href="/">JobSearch</a>
 
-            <button class="navbar-toggler" type="button"
+            <button class="navbar-toggler"
+                    type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarNav"
                     aria-controls="navbarNav"
@@ -49,7 +50,11 @@
 
                 <div class="d-flex">
                     <a href="/register" class="btn btn-outline-light me-2">Регистрация</a>
-                    <a href="/login" class="btn btn-warning">Войти</a>
+                    <a href="/login" class="btn btn-warning me-2">Войти</a>
+
+                    <form action="/logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger">Выйти</button>
+                    </form>
                 </div>
             </div>
         </div>
