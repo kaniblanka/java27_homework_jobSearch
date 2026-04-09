@@ -19,7 +19,20 @@
 
                         <div class="mb-3">
                             <label class="form-label">Возраст</label>
-                            <input type="number" class="form-control" name="age" value="${(userCreateDto.age)!}">
+                            <input type="number"
+                                   class="form-control"
+                                   name="age"
+                                   min="1"
+                                   max="100"
+                                   value="${(userCreateDto.age)!}">
+
+                            <#if bindingResult?? && bindingResult.hasFieldErrors("age")>
+                                <div class="text-danger mt-1">
+                                    <#list bindingResult.getFieldErrors("age") as err>
+                                        ${err.defaultMessage}
+                                    </#list>
+                                </div>
+                            </#if>
                         </div>
 
                         <div class="mb-3">

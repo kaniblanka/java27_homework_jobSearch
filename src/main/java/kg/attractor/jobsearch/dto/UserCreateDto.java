@@ -18,8 +18,9 @@ public class UserCreateDto {
     @Size(min = 2, max = 50)
     private String surname;
 
-    @NotNull(message = "Age cannot be null")
-    @Positive(message = "Age must be positive")
+    @NotNull(message = "Возраст обязателен")
+    @Min(value = 1, message = "Возраст должен быть не меньше 1")
+    @Max(value = 100, message = "Возраст не должен превышать 100")
     private Integer age;
 
     @NotBlank(message = "Email cannot be empty")

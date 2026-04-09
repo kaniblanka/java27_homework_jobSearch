@@ -33,6 +33,7 @@ public class AuthController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("userCreateDto", userCreateDto);
+            model.addAttribute("bindingResult", bindingResult);
             return "auth/register";
         }
 
