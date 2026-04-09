@@ -25,7 +25,7 @@ public class CandidateResumeController {
     @GetMapping("create")
     public String createPage(Model model) {
         model.addAttribute("resumeCreateWebDto", new ResumeCreateWebDto());
-        return "resumes/create";
+        return "resumes/create-resume";
     }
 
     @PostMapping("create")
@@ -37,7 +37,7 @@ public class CandidateResumeController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("resumeCreateWebDto", dto);
-            return "resumes/create";
+            return "resumes/create-resume";
         }
 
         UserDto user = userService.findByEmail(principal.getName());
