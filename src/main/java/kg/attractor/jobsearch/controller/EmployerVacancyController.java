@@ -42,7 +42,13 @@ public class EmployerVacancyController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("vacancyCreateWebDto", vacancyCreateWebDto);
-            return "vacancies/create-vacancy";
+            return "vacancies/create";
+        }
+
+        if (vacancyCreateWebDto.getExpTo() < vacancyCreateWebDto.getExpFrom()) {
+            model.addAttribute("vacancyCreateWebDto", vacancyCreateWebDto);
+            model.addAttribute("expError", "Опыт до не может быть меньше, чем опыт от");
+            return "vacancies/create";
         }
 
         UserDto currentUser = userService.findByEmail(principal.getName());
@@ -56,8 +62,8 @@ public class EmployerVacancyController {
         vacancyDto.setExpTo(vacancyCreateWebDto.getExpTo());
         vacancyDto.setAuthorId(currentUser.getId());
         vacancyDto.setIsActive(true);
-        vacancyDto.setCreatedDate(LocalDateTime.now());
-        vacancyDto.setUpdateTime(LocalDateTime.now());
+        vacancyDto.setCreatedDate(java.time.LocalDateTime.now());
+        vacancyDto.setUpdateTime(java.time.LocalDateTime.now());
 
         vacancyService.createVacancy(vacancyDto);
 
