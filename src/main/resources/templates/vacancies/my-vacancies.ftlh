@@ -1,8 +1,12 @@
 <#import "../layout.ftlh" as main>
 <@main.layout>
-    <div class="mb-4">
-        <h1 class="mb-2">Мои вакансии</h1>
-        <p class="text-muted">Вакансии работодателя: ${user.name} ${user.surname}</p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-2">Мои вакансии</h1>
+            <p class="text-muted">Вакансии работодателя: ${user.name} ${user.surname}</p>
+        </div>
+
+        <a href="/employer/vacancies/create" class="btn btn-success">Создать вакансию</a>
     </div>
 
     <#if vacancies?size == 0>
