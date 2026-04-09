@@ -6,6 +6,7 @@ import kg.attractor.jobsearch.dto.UserEditDto;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.exception.UserNotFoundException;
 import kg.attractor.jobsearch.service.UserService;
+import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ import java.security.Principal;
 public class ProfileController {
 
     private final UserService userService;
+    private final VacancyService vacancyService;
 
     @GetMapping
     public String profilePage(Model model, Principal principal) throws UserNotFoundException {
@@ -62,7 +64,12 @@ public class ProfileController {
     }
 
     @GetMapping("vacancies")
-    public String myVacanciesPage() {
+    public String myVacanciesPage(Model model, Principal principal) throws UserNotFoundException {
+        UserDto user = userService.findByEmail(principal.getName());
+
+        model.addAttribute("user", user);
+        model.addAttribute("vacancies", vacancyService.getVacanciesByAuthorId(user.getId()));
+
         return "vacancies/my-vacancies";
     }
 }
