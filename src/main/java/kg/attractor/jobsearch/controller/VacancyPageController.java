@@ -15,7 +15,7 @@ public class VacancyPageController {
     private final VacancyService vacancyService;
 
     @GetMapping
-    public String vacancies(Model model) {
+    public String getVacancies(Model model) {
         model.addAttribute("vacancies", vacancyService.getAllActiveVacancies());
         return "vacancies/vacancies";
     }
