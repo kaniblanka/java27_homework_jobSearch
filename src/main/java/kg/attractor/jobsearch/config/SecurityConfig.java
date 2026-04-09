@@ -78,6 +78,7 @@ public class SecurityConfig {
                         .requestMatchers("/resumes").permitAll()
                         .requestMatchers("/static/**").permitAll()
                         .requestMatchers("/profile", "/profile/**").authenticated()
+                        .requestMatchers("/employer/vacancies/**").hasAuthority("CREATE_VACANCY")
 
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
