@@ -7,7 +7,10 @@
             <div class="row">
                 <div class="col-md-3 text-center mb-3">
                     <#if user.avatar?? && user.avatar?has_content>
-                        <img src="${user.avatar}" alt="avatar" class="img-fluid rounded-circle border" style="max-width: 180px;">
+                        <img src="${user.avatar}"
+                             alt="avatar"
+                             class="img-fluid rounded-circle border"
+                             style="max-width: 180px;">
                     <#else>
                         <div class="border rounded-circle d-flex align-items-center justify-content-center mx-auto"
                              style="width: 180px; height: 180px;">
@@ -26,7 +29,14 @@
 
                     <div class="mt-4">
                         <a href="/profile/edit" class="btn btn-dark me-2">Редактировать профиль</a>
-                        <a href="/profile/vacancies" class="btn btn-outline-secondary">Мои вакансии</a>
+
+                        <#if user.accountType == "EMPLOYER">
+                            <a href="/profile/vacancies" class="btn btn-outline-secondary">Мои вакансии</a>
+                        </#if>
+
+                        <#if user.accountType == "CANDIDATE">
+                            <a href="/resumes" class="btn btn-outline-secondary">Все резюме</a>
+                        </#if>
                     </div>
                 </div>
             </div>
