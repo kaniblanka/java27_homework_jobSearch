@@ -36,8 +36,9 @@
                         </#if>
 
                         <#if user.accountType == "CANDIDATE">
-                            <a href="/profile/resumes" class="btn btn-outline-secondary me-2">Мои резюме</a>
-                            <a href="/candidate/resumes/create" class="btn btn-success">Создать резюме</a>
+                            <a href="/candidate/resumes/create" class="btn btn-success">
+                                Создать резюме
+                            </a>
                         </#if>
                     </div>
                 </div>

@@ -1,9 +1,7 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
-import kg.attractor.jobsearch.dto.ResumeCreateDto;
-import kg.attractor.jobsearch.dto.ResumeCreateWebDto;
-import kg.attractor.jobsearch.dto.UserDto;
+import kg.attractor.jobsearch.dto.*;
 import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.UserNotFoundException;
 import kg.attractor.jobsearch.service.ResumeService;
@@ -12,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -28,32 +23,33 @@ public class CandidateResumeController {
     private final UserService userService;
 
     @GetMapping("create")
-    public String createResumePage(Model model) {
+    public String createPage(Model model) {
         model.addAttribute("resumeCreateWebDto", new ResumeCreateWebDto());
-        return "resumes/create-resume";
+        return "resumes/create";
     }
 
     @PostMapping("create")
-    public String createResume(@Valid @ModelAttribute ResumeCreateWebDto resumeCreateWebDto,
+    public String createResume(@Valid @ModelAttribute ResumeCreateWebDto dto,
                                BindingResult bindingResult,
                                Principal principal,
-                               Model model) throws UserNotFoundException, CreateEntryException {
+                               Model model)
+            throws UserNotFoundException, CreateEntryException {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("resumeCreateWebDto", resumeCreateWebDto);
-            return "resumes/create-resume";
+            model.addAttribute("resumeCreateWebDto", dto);
+            return "resumes/create";
         }
 
-        UserDto currentUser = userService.findByEmail(principal.getName());
+        UserDto user = userService.findByEmail(principal.getName());
 
-        ResumeCreateDto resumeCreateDto = new ResumeCreateDto();
-        resumeCreateDto.setApplicantId(currentUser.getId());
-        resumeCreateDto.setName(resumeCreateWebDto.getName());
-        resumeCreateDto.setCategoryId(resumeCreateWebDto.getCategoryId());
-        resumeCreateDto.setSalary(resumeCreateWebDto.getSalary());
-        resumeCreateDto.setIsActive(true);
+        ResumeCreateDto resume = new ResumeCreateDto();
+        resume.setApplicantId(user.getId());
+        resume.setName(dto.getName());
+        resume.setCategoryId(dto.getCategoryId());
+        resume.setSalary(dto.getSalary());
+        resume.setIsActive(true);
 
-        resumeService.createResume(resumeCreateDto);
+        resumeService.createResume(resume);
 
         return "redirect:/profile/resumes";
     }
