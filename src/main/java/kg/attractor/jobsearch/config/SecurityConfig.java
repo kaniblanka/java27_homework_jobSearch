@@ -67,15 +67,17 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher("/logout"))
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
 
-                        .requestMatchers("/", "/login", "/register", "/vacancies", "/resumes").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/vacancies").permitAll()
+                        .requestMatchers("/resumes").permitAll()
                         .requestMatchers("/static/**").permitAll()
+                        .requestMatchers("/profile", "/profile/**").authenticated()
 
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
@@ -87,6 +89,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/vacancies/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/vacancies/**").authenticated()
 
+                        .requestMatchers(HttpMethod.GET, "/api/resumes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/resumes/category/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/resumes/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/resumes").hasAuthority("CREATE_RESUME")
                         .requestMatchers(HttpMethod.PUT, "/api/resumes/**").authenticated()
