@@ -15,7 +15,7 @@ public class ResumePageController {
     private final ResumeService resumeService;
 
     @GetMapping
-    public String resumes(Model model) {
+    public String getResumes(Model model) {
         model.addAttribute("resumes", resumeService.getAllResumes());
         return "resumes/resumes";
     }
