@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import javax.sql.DataSource;
 
@@ -31,15 +32,19 @@ public class SecurityConfig {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        String userQuery = "select email, password, enabled " +
-                "from users " +
-                "where email = ?";
+        String userQuery = """
+                select email, password, enabled
+                from users
+                where email = ?
+                """;
 
-        String authQuery = "select u.email, a.authority " +
-                "from users u " +
-                "inner join user_authorities ua on u.id = ua.user_id " +
-                "inner join authorities a on ua.authority_id = a.id " +
-                "where u.email = ?";
+        String authQuery = """
+                select u.email, a.authority
+                from users u
+                inner join user_authorities ua on u.id = ua.user_id
+                inner join authorities a on ua.authority_id = a.id
+                where u.email = ?
+                """;
 
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
@@ -50,37 +55,45 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .formLogin(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher("/logout"))
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                )
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
 
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/vacancies", "/resumes").permitAll()
+                        .requestMatchers("/static/**").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/vacancies").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/vacancies/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
 
-                        .requestMatchers(HttpMethod.POST, "/resumes").hasAuthority("CREATE_RESUME")
-                        .requestMatchers(HttpMethod.POST, "/vacancies").hasAuthority("CREATE_VACANCY")
+                        .requestMatchers(HttpMethod.GET, "/api/vacancies").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/vacancies/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/vacancies").hasAuthority("CREATE_VACANCY")
+                        .requestMatchers(HttpMethod.PUT, "/api/vacancies/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/vacancies/**").authenticated()
 
-                        .requestMatchers(HttpMethod.PUT, "/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/resumes/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/resumes").hasAuthority("CREATE_RESUME")
+                        .requestMatchers(HttpMethod.PUT, "/api/resumes/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/resumes/**").authenticated()
 
-                        .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
-
-                        .requestMatchers(HttpMethod.PUT, "/resumes/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/resumes/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/resumes/**").authenticated()
-
-                        .requestMatchers(HttpMethod.PUT, "/vacancies/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/vacancies/**").authenticated()
-
-                        .requestMatchers(HttpMethod.POST, "/responses/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/responses/**").authenticated()
-
-                        .requestMatchers(HttpMethod.POST, "/images/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/images/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/images/**").authenticated()
 
                         .anyRequest().permitAll()
                 );
