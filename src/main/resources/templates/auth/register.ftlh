@@ -6,25 +6,25 @@
                 <div class="card-body">
                     <h2 class="mb-4">Регистрация</h2>
 
-                    <form>
+                    <form action="/register" method="post">
                         <div class="mb-3">
                             <label class="form-label">Имя</label>
-                            <input type="text" class="form-control" name="name">
+                            <input type="text" class="form-control" name="name" value="${(userCreateDto.name)!}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Фамилия</label>
-                            <input type="text" class="form-control" name="surname">
+                            <input type="text" class="form-control" name="surname" value="${(userCreateDto.surname)!}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Возраст</label>
-                            <input type="number" class="form-control" name="age">
+                            <input type="number" class="form-control" name="age" value="${(userCreateDto.age)!}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email">
+                            <input type="email" class="form-control" name="email" value="${(userCreateDto.email)!}">
                         </div>
 
                         <div class="mb-3">
@@ -34,12 +34,12 @@
 
                         <div class="mb-3">
                             <label class="form-label">Телефон</label>
-                            <input type="text" class="form-control" name="phoneNumber">
+                            <input type="text" class="form-control" name="phoneNumber" value="${(userCreateDto.phoneNumber)!}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Аватар</label>
-                            <input type="text" class="form-control" name="avatar" placeholder="Ссылка на изображение">
+                            <input type="text" class="form-control" name="avatar" value="${(userCreateDto.avatar)!}">
                         </div>
 
                         <div class="mb-4">
