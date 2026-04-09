@@ -51,6 +51,21 @@ public class VacancyDao {
         );
     }
 
+    public List<Vacancy> findByAuthorId(Long authorId) {
+        String sql = """
+                select *
+                from vacancies
+                where author_id = :authorId
+                order by created_date desc
+                """;
+
+        return jdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource().addValue("authorId", authorId),
+                new VacancyMapper()
+        );
+    }
+
     public void create(Vacancy vacancy) {
         String sql = "insert into vacancies(name, description, category_id, salary, exp_from, exp_to, is_active, author_id, created_date, update_time) " +
                 "values(:name, :description, :categoryId, :salary, :expFrom, :expTo, :isActive, :authorId, :createdDate, :updateTime)";
