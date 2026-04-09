@@ -6,7 +6,19 @@
                 <div class="card-body">
                     <h2 class="mb-4">Вход</h2>
 
-                    <form>
+                    <#if (RequestParameters.error??)>
+                        <div class="alert alert-danger">
+                            Неверный email или пароль
+                        </div>
+                    </#if>
+
+                    <#if (RequestParameters.logout??)>
+                        <div class="alert alert-success">
+                            Вы вышли из аккаунта
+                        </div>
+                    </#if>
+
+                    <form action="/login" method="post">
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-control" name="username">
