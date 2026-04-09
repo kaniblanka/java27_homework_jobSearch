@@ -1,4 +1,4 @@
-package kg.attractor.jobsearch.controller;
+package kg.attractor.jobsearch.controller.api;
 
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.model.RespondedApplicant;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("responses")
+@RequestMapping("api/responses")
 @RequiredArgsConstructor
-public class RespondedApplicantController {
+public class ApiRespondedApplicantController {
 
     private final RespondedApplicantService respondedApplicantService;
 

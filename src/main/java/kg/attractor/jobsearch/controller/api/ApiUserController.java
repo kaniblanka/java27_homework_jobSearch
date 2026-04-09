@@ -1,4 +1,4 @@
-package kg.attractor.jobsearch.controller;
+package kg.attractor.jobsearch.controller.api;
 
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.UserCreateDto;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("api/users")
 @RequiredArgsConstructor
-public class UserController {
+public class ApiUserController {
 
     private final UserService userService;
 

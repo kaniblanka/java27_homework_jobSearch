@@ -1,13 +1,13 @@
-package kg.attractor.jobsearch.controller;
+package kg.attractor.jobsearch.controller.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("images")
+@RequestMapping("api/images")
 @RequiredArgsConstructor
-public class ImageController {
+public class ApiImageController {
 
     @PostMapping
     public HttpStatus uploadImage(@RequestBody String imageName) {
