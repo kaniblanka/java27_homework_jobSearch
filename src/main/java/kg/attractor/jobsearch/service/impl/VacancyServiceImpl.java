@@ -149,4 +149,17 @@ public class VacancyServiceImpl implements VacancyService {
         log.info("Vacancy found, id={}", id);
         return vacancyDto;
     }
+
+    @Override
+    public List<VacancyDto> getVacanciesByAuthorId(Long authorId) {
+        log.info("Getting vacancies by authorId={}", authorId);
+
+        List<VacancyDto> vacancies = vacancyDao.findByAuthorId(authorId)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+
+        log.info("Found {} vacancies for authorId={}", vacancies.size(), authorId);
+        return vacancies;
+    }
 }

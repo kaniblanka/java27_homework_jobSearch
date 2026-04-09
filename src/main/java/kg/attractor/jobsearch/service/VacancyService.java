@@ -15,4 +15,6 @@ public interface VacancyService {
     List<VacancyDto> getAllActiveVacancies();
     List<VacancyDto> getVacanciesByCategory(Long categoryId);
     VacancyDto getVacancyById(Long id) throws VacancyNotFoundException;
+
+    List<VacancyDto> getVacanciesByAuthorId(Long authorId);
 }
