@@ -6,35 +6,35 @@
                 <div class="card-body">
                     <h2 class="mb-4">Редактирование профиля</h2>
 
-                    <form>
+                    <form action="/profile/edit" method="post">
                         <div class="mb-3">
                             <label class="form-label">Имя</label>
-                            <input type="text" class="form-control" name="name">
+                            <input type="text" class="form-control" name="name" value="${(userEditDto.name)!}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Фамилия</label>
-                            <input type="text" class="form-control" name="surname">
+                            <input type="text" class="form-control" name="surname" value="${(userEditDto.surname)!}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Возраст</label>
-                            <input type="number" class="form-control" name="age">
+                            <input type="number" class="form-control" name="age" value="${(userEditDto.age)!}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email">
+                            <input type="email" class="form-control" name="email" value="${(userEditDto.email)!}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Телефон</label>
-                            <input type="text" class="form-control" name="phoneNumber">
+                            <input type="text" class="form-control" name="phoneNumber" value="${(userEditDto.phoneNumber)!}">
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label">Аватар</label>
-                            <input type="text" class="form-control" name="avatar">
+                            <input type="text" class="form-control" name="avatar" value="${(userEditDto.avatar)!}">
                         </div>
 
                         <button type="submit" class="btn btn-dark w-100">Сохранить</button>
