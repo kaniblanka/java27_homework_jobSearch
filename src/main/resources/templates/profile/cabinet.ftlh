@@ -2,17 +2,33 @@
 <@main.layout>
     <div class="card shadow-sm">
         <div class="card-body">
-            <h2 class="mb-3">Личный кабинет</h2>
+            <h2 class="mb-4">Личный кабинет</h2>
 
-            <p><strong>Имя:</strong> Имя пользователя</p>
-            <p><strong>Фамилия:</strong> Фамилия пользователя</p>
-            <p><strong>Email:</strong> email@example.com</p>
-            <p><strong>Телефон:</strong> +996700000000</p>
-            <p><strong>Тип аккаунта:</strong> CANDIDATE / EMPLOYER</p>
+            <div class="row">
+                <div class="col-md-3 text-center mb-3">
+                    <#if user.avatar?? && user.avatar?has_content>
+                        <img src="${user.avatar}" alt="avatar" class="img-fluid rounded-circle border" style="max-width: 180px;">
+                    <#else>
+                        <div class="border rounded-circle d-flex align-items-center justify-content-center mx-auto"
+                             style="width: 180px; height: 180px;">
+                            No Avatar
+                        </div>
+                    </#if>
+                </div>
 
-            <div class="mt-4">
-                <a href="/profile/edit" class="btn btn-dark me-2">Редактировать профиль</a>
-                <a href="/profile/vacancies" class="btn btn-outline-secondary">Мои вакансии</a>
+                <div class="col-md-9">
+                    <p><strong>Имя:</strong> ${user.name}</p>
+                    <p><strong>Фамилия:</strong> ${user.surname}</p>
+                    <p><strong>Возраст:</strong> ${user.age}</p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Телефон:</strong> ${user.phoneNumber}</p>
+                    <p><strong>Тип аккаунта:</strong> ${user.accountType}</p>
+
+                    <div class="mt-4">
+                        <a href="/profile/edit" class="btn btn-dark me-2">Редактировать профиль</a>
+                        <a href="/profile/vacancies" class="btn btn-outline-secondary">Мои вакансии</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
