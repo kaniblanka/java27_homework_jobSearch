@@ -22,36 +22,42 @@
         <div class="container">
             <a class="navbar-brand" href="/">JobSearch</a>
 
-            <button class="navbar-toggler"
-                    type="button"
+            <button class="navbar-toggler" type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarNav"
                     aria-controls="navbarNav"
                     aria-expanded="false"
-                    aria-label="Toggle navigation">
+                    aria-label="Переключить навигацию">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/vacancies">Вакансии</a>
+                        <a class="nav-link" href="/">Вакансии</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/resumes">Резюме</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile">Личный кабинет</a>
-                    </li>
+
+                    <#if Request.userPrincipal??>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/profile">Личный кабинет</a>
+                        </li>
+                    </#if>
                 </ul>
 
                 <div class="d-flex">
-                    <a href="/register" class="btn btn-outline-light me-2">Регистрация</a>
-                    <a href="/login" class="btn btn-warning me-2">Войти</a>
+                    <#if Request.userPrincipal??>
+                        <a href="/profile" class="btn btn-outline-light me-2">Личный кабинет</a>
 
-                    <form action="/logout" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-danger">Выйти</button>
-                    </form>
+                        <form action="/logout" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger">Выйти</button>
+                        </form>
+                    <#else>
+                        <a href="/register" class="btn btn-outline-light me-2">Регистрация</a>
+                        <a href="/login" class="btn btn-warning">Войти</a>
+                    </#if>
                 </div>
             </div>
         </div>
