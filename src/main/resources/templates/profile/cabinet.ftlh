@@ -30,6 +30,7 @@
 
                         <#if user.accountType == "EMPLOYER">
                             <a href="/profile/vacancies" class="btn btn-outline-secondary me-2">Мои вакансии</a>
+                            <a href="/employer/resumes" class="btn btn-outline-primary me-2">Смотреть резюме</a>
                             <a href="/employer/vacancies/create" class="btn btn-success">Создать вакансию</a>
                         </#if>
 

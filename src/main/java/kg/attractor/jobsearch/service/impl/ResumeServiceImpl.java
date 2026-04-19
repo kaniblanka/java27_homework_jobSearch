@@ -13,6 +13,8 @@ import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import kg.attractor.jobsearch.service.ResumeService;
+import kg.attractor.jobsearch.dao.UserDao;
+import kg.attractor.jobsearch.dao.CategoryDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,18 +30,29 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeDao resumeDao;
     private final EducationInfoDao educationInfoDao;
     private final WorkExperienceInfoDao workExperienceInfoDao;
+    private final UserDao userDao;
+    private final CategoryDao categoryDao;
 
     private ResumeDto mapToDto(Resume resume) {
-        return new ResumeDto(
-                resume.getId(),
-                resume.getApplicantId(),
-                resume.getName(),
-                resume.getCategoryId(),
-                resume.getSalary(),
-                resume.getIsActive(),
-                resume.getCreatedDate(),
-                resume.getUpdateTime()
-        );
+        ResumeDto dto = new ResumeDto();
+
+        dto.setId(resume.getId());
+        dto.setApplicantId(resume.getApplicantId());
+        dto.setName(resume.getName());
+        dto.setCategoryId(resume.getCategoryId());
+        dto.setSalary(resume.getSalary());
+        dto.setIsActive(resume.getIsActive());
+        dto.setCreatedDate(resume.getCreatedDate());
+        dto.setUpdateTime(resume.getUpdateTime());
+        userDao.findById(resume.getApplicantId()).ifPresent(user -> {
+            dto.setApplicantName(user.getName() + " " + user.getSurname());
+        });
+
+        categoryDao.findById(resume.getCategoryId()).ifPresent(category -> {
+            dto.setCategoryName(category.getName());
+        });
+
+        return dto;
     }
 
     @Override

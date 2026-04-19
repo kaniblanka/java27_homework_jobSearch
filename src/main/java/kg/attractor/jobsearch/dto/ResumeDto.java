@@ -20,12 +20,16 @@ public class ResumeDto {
     @NotNull(message = "Applicant id cannot be null")
     private Long applicantId;
 
+    private String applicantName;
+
     @NotBlank(message = "Resume name cannot be empty")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     private String name;
 
     @NotNull(message = "Category id cannot be null")
     private Long categoryId;
+
+    private String categoryName;
 
     @NotNull(message = "Salary cannot be null")
     @Positive(message = "Salary must be positive")
