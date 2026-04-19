@@ -87,13 +87,18 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ResumeDto updateResume(Long id, Resume resume) throws ResumeNotFoundException, UpdateEntryException {
-        resumeDao.findById(id).orElseThrow(ResumeNotFoundException::new);
+    public ResumeDto updateResume(Long id, ResumeCreateDto dto) throws ResumeNotFoundException, UpdateEntryException {
+        Resume existingResume = resumeDao.findById(id)
+                .orElseThrow(ResumeNotFoundException::new);
 
-        resume.setUpdateTime(LocalDateTime.now());
+        existingResume.setApplicantId(dto.getApplicantId());
+        existingResume.setName(dto.getName());
+        existingResume.setCategoryId(dto.getCategoryId());
+        existingResume.setSalary(dto.getSalary());
+        existingResume.setIsActive(dto.getIsActive());
+        existingResume.setUpdateTime(LocalDateTime.now());
 
-        boolean updated = resumeDao.update(id, resume);
-
+        boolean updated = resumeDao.update(id, existingResume);
         if (!updated) {
             throw new UpdateEntryException("Resume was not updated");
         }
