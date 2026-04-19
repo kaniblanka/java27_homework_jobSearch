@@ -7,7 +7,6 @@ import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.DeleteEntryException;
 import kg.attractor.jobsearch.exception.ResumeNotFoundException;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
-import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,9 +28,9 @@ public class ApiResumeController {
 
     @PutMapping("{id}")
     public ResumeDto updateResume(@PathVariable Long id,
-                                  @Valid @RequestBody Resume resume)
+                                  @Valid @RequestBody ResumeCreateDto dto)
             throws ResumeNotFoundException, UpdateEntryException {
-        return resumeService.updateResume(id, resume);
+        return resumeService.updateResume(id, dto);
     }
 
     @DeleteMapping("{id}")
@@ -54,10 +53,5 @@ public class ApiResumeController {
     @GetMapping("category/{categoryId}")
     public List<ResumeDto> getResumesByCategory(@PathVariable Long categoryId) {
         return resumeService.getResumesByCategory(categoryId);
-    }
-
-    @GetMapping("applicant/{applicantId}")
-    public List<ResumeDto> getResumesByApplicantId(@PathVariable Long applicantId) {
-        return resumeService.getResumesByApplicantId(applicantId);
     }
 }
