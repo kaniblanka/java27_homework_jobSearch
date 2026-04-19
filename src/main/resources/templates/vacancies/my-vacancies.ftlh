@@ -30,6 +30,12 @@
                             <#else>
                                 <span class="badge bg-secondary">Неактивна</span>
                             </#if>
+
+                            <div class="mt-3">
+                                <a href="/employer/vacancies/edit/${vacancy.id}" class="btn btn-warning btn-sm">
+                                    Редактировать
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
