@@ -47,7 +47,13 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h3 class="mb-3">Фото профиля</h3>
-
+                    <#if userEditDto.avatar?? && userEditDto.avatar?has_content>
+                        <div class="mb-3 text-center">
+                            <img src="/api/images/${userEditDto.avatar}"
+                                 class="img-fluid rounded-circle border"
+                                 style="max-width: 120px;">
+                        </div>
+                    </#if>
                     <form action="/profile/avatar" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label">Выберите фото</label>

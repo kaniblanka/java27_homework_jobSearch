@@ -3,10 +3,10 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-8 col-lg-6">
             <div class="card shadow-sm border-danger">
-                <div class="card-body text-center">
-                    <h1 class="display-4 text-danger mb-3">${status!500}</h1>
+                <div class="card-body text-center p-5">
+                    <h1 class="display-3 text-danger mb-3">${status!500}</h1>
                     <h3 class="mb-3">${error!"Error"}</h3>
-                    <p class="text-muted mb-3">${message!"Something went wrong"}</p>
+                    <p class="text-muted mb-4">${message!"Something went wrong"}</p>
 
                     <#if path??>
                         <p class="small text-secondary mb-4">

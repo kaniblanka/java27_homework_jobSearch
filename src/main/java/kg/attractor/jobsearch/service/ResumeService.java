@@ -16,11 +16,11 @@ public interface ResumeService {
 
     void deleteResume(Long id) throws ResumeNotFoundException, DeleteEntryException;
 
-    List getAllResumes();
+    List<ResumeDto> getAllResumes();
 
-    List getResumesByCategory(Long categoryId);
+    List<ResumeDto> getResumesByCategory(Long categoryId);
 
-    List getResumesByApplicantId(Long applicantId);
+    List<ResumeDto> getResumesByApplicantId(Long applicantId);
 
     ResumeDto getResumeById(Long id) throws ResumeNotFoundException;
 }
