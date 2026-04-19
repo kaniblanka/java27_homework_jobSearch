@@ -7,9 +7,7 @@
             <div class="row">
                 <div class="col-md-3 text-center mb-3">
                     <#if user.avatar?? && user.avatar?has_content>
-                        <img src="${user.avatar}"
-                             alt="avatar"
-                             class="img-fluid rounded-circle border"
+                        <img src="/api/images/${user.avatar}" alt="avatar" class="img-fluid rounded-circle border"
                              style="max-width: 180px;">
                     <#else>
                         <div class="border rounded-circle d-flex align-items-center justify-content-center mx-auto"

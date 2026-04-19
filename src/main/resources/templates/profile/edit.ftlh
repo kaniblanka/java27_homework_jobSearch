@@ -1,46 +1,64 @@
 <#import "../layout.ftlh" as main>
-<@main.layout>
+<@main.layout ; spring>
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
+
+            <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <h2 class="mb-4">Редактирование профиля</h2>
 
                     <form action="/profile/edit" method="post">
                         <div class="mb-3">
                             <label class="form-label">Имя</label>
-                            <input type="text" class="form-control" name="name" value="${(userEditDto.name)!}">
+                            <@spring.formInput "userEditDto.name" 'class="form-control"' />
+                            <@spring.showErrors "<br>" "text-danger" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Фамилия</label>
-                            <input type="text" class="form-control" name="surname" value="${(userEditDto.surname)!}">
+                            <@spring.formInput "userEditDto.surname" 'class="form-control"' />
+                            <@spring.showErrors "<br>" "text-danger" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Возраст</label>
-                            <input type="number" class="form-control" name="age" value="${(userEditDto.age)!}">
+                            <@spring.formInput "userEditDto.age" 'class="form-control"' />
+                            <@spring.showErrors "<br>" "text-danger" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" value="${(userEditDto.email)!}">
+                            <@spring.formInput "userEditDto.email" 'class="form-control"' />
+                            <@spring.showErrors "<br>" "text-danger" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Телефон</label>
-                            <input type="text" class="form-control" name="phoneNumber" value="${(userEditDto.phoneNumber)!}">
+                            <@spring.formInput "userEditDto.phoneNumber" 'class="form-control"' />
+                            <@spring.showErrors "<br>" "text-danger" />
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label">Аватар</label>
-                            <input type="text" class="form-control" name="avatar" value="${(userEditDto.avatar)!}">
-                        </div>
-
-                        <button type="submit" class="btn btn-dark w-100">Сохранить</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a href="/profile" class="btn btn-outline-secondary">Отмена</a>
                     </form>
                 </div>
             </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-3">Фото профиля</h3>
+
+                    <form action="/profile/avatar" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Выберите фото</label>
+                            <input type="file" name="avatarFile" class="form-control" accept="image/*">
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Загрузить фото</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </@main.layout>
