@@ -1,5 +1,5 @@
 <#import "../layout.ftlh" as main>
-<#import "spring.ftl" as spring>
+<#import "/spring.ftl" as spring>
 
 <@main.layout>
     <div class="row justify-content-center">
