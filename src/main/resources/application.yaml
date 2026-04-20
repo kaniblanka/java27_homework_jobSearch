@@ -10,8 +10,8 @@ spring:
 
   datasource:
     url: jdbc:h2:./db/jobsearch;AUTO_SERVER=TRUE
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: sa
+    password:
     driver-class-name: org.h2.Driver
 
   liquibase:
