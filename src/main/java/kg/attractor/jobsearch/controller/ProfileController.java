@@ -68,8 +68,23 @@ public class ProfileController {
 
     @PostMapping("avatar")
     public String uploadAvatar(@RequestParam("avatarFile") MultipartFile avatarFile,
-                               Principal principal) throws UserNotFoundException, UpdateEntryException {
+                               Principal principal,
+                               Model model) throws UserNotFoundException, UpdateEntryException {
         UserDto currentUser = userService.findByEmail(principal.getName());
+
+        if (avatarFile == null || avatarFile.isEmpty()) {
+            UserEditDto userEditDto = new UserEditDto();
+            userEditDto.setName(currentUser.getName());
+            userEditDto.setSurname(currentUser.getSurname());
+            userEditDto.setAge(currentUser.getAge());
+            userEditDto.setEmail(currentUser.getEmail());
+            userEditDto.setPhoneNumber(currentUser.getPhoneNumber());
+            userEditDto.setAvatar(currentUser.getAvatar());
+
+            model.addAttribute("userEditDto", userEditDto);
+            model.addAttribute("avatarError", "Сначала выберите файл");
+            return "profile/edit";
+        }
 
         String fileName = imageService.uploadAvatar(avatarFile);
 

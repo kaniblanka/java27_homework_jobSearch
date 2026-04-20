@@ -19,20 +19,35 @@ import java.util.UUID;
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    private final Path rootLocation = Paths.get("data/images");
+    private final Path rootLocation = Paths.get("data", "images")
+            .toAbsolutePath()
+            .normalize();
 
     @Override
     public String uploadAvatar(MultipartFile file) {
         try {
+            log.info("=== Image upload started ===");
+            log.info("Target folder: {}", rootLocation);
+
             if (file == null || file.isEmpty()) {
                 throw new RuntimeException("File is empty");
             }
 
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("Only image files are allowed");
+            }
+
             Files.createDirectories(rootLocation);
 
-            String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-            String extension = "";
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || originalFilename.isBlank()) {
+                throw new RuntimeException("Invalid file name");
+            }
 
+            originalFilename = StringUtils.cleanPath(originalFilename);
+
+            String extension = "";
             int dotIndex = originalFilename.lastIndexOf('.');
             if (dotIndex >= 0) {
                 extension = originalFilename.substring(dotIndex);
@@ -40,22 +55,24 @@ public class ImageServiceImpl implements ImageService {
 
             String newFileName = UUID.randomUUID() + extension;
 
-            Path destinationFile = rootLocation.resolve(newFileName).normalize().toAbsolutePath();
+            Path destinationFile = rootLocation.resolve(newFileName).normalize();
 
             Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
 
-            log.info("Avatar uploaded successfully: {}", newFileName);
+            log.info("File saved successfully: {}", destinationFile);
+
             return newFileName;
+
         } catch (Exception e) {
             log.error("Failed to upload avatar", e);
-            throw new RuntimeException("Failed to upload avatar");
+            throw new RuntimeException("Failed to upload avatar: " + e.getMessage());
         }
     }
 
     @Override
     public Resource getAvatar(String fileName) {
         try {
-            Path file = rootLocation.resolve(fileName).normalize().toAbsolutePath();
+            Path file = rootLocation.resolve(fileName).normalize();
             Resource resource = new UrlResource(file.toUri());
 
             if (!resource.exists() || !resource.isReadable()) {
@@ -63,6 +80,7 @@ public class ImageServiceImpl implements ImageService {
             }
 
             return resource;
+
         } catch (MalformedURLException e) {
             log.error("Failed to read avatar: {}", fileName, e);
             throw new RuntimeException("Failed to read avatar");

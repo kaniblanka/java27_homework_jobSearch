@@ -58,6 +58,12 @@
                         </div>
                     </#if>
 
+                    <#if avatarError??>
+                        <div class="alert alert-danger">
+                            ${avatarError}
+                        </div>
+                    </#if>
+
                     <form action="/profile/avatar" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label">Выберите фото</label>
