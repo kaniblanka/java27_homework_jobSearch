@@ -42,7 +42,7 @@
                         <a class="nav-link" href="/resumes">Резюме</a>
                     </li>
 
-                    <#if isAuthenticated>
+                    <#if isAuthenticated?? && isAuthenticated>
                         <li class="nav-item">
                             <a class="nav-link" href="/profile">Личный кабинет</a>
                         </li>
@@ -50,7 +50,7 @@
                 </ul>
 
                 <div class="d-flex">
-                    <#if isAuthenticated>
+                    <#if isAuthenticated?? && isAuthenticated>
                         <form action="/logout" method="post" class="d-inline">
                             <button type="submit" class="btn btn-danger">Выйти</button>
                         </form>

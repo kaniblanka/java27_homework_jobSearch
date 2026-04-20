@@ -1,5 +1,7 @@
 <#import "../layout.ftlh" as main>
-<@main.layout ; spring>
+<#import "spring.ftl" as spring>
+
+<@main.layout>
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
 
@@ -22,13 +24,13 @@
 
                         <div class="mb-3">
                             <label class="form-label">Возраст</label>
-                            <@spring.formInput "userEditDto.age" 'class="form-control"' />
+                            <@spring.formInput "userEditDto.age" 'class="form-control" type="number"' />
                             <@spring.showErrors "<br>" "text-danger" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <@spring.formInput "userEditDto.email" 'class="form-control"' />
+                            <@spring.formInput "userEditDto.email" 'class="form-control" type="email"' />
                             <@spring.showErrors "<br>" "text-danger" />
                         </div>
 
@@ -47,6 +49,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h3 class="mb-3">Фото профиля</h3>
+
                     <#if userEditDto.avatar?? && userEditDto.avatar?has_content>
                         <div class="mb-3 text-center">
                             <img src="/api/images/${userEditDto.avatar}"
@@ -54,6 +57,7 @@
                                  style="max-width: 120px;">
                         </div>
                     </#if>
+
                     <form action="/profile/avatar" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label">Выберите фото</label>
