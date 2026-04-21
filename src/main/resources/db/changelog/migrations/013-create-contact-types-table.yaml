@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 013-create-contact-types-table
+      author: Kanyshai
+      changes:
+        - createTable:
+            tableName: contact_types
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
