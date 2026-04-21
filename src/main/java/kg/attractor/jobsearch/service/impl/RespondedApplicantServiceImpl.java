@@ -19,8 +19,8 @@ public class RespondedApplicantServiceImpl implements RespondedApplicantService 
     @Override
     public RespondedApplicant respondToVacancy(RespondedApplicant respondedApplicant) {
         log.info("Creating response for vacancyId={}, resumeId={}",
-                respondedApplicant.getVacancyId(),
-                respondedApplicant.getResumeId());
+                respondedApplicant.getVacancy().getId(),
+                respondedApplicant.getResume().getId());
 
         Long id = respondedApplicantDao.create(respondedApplicant);
         respondedApplicant.setId(id);

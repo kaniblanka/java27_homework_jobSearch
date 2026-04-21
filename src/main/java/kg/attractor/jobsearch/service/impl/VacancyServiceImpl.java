@@ -6,6 +6,8 @@ import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.DeleteEntryException;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.exception.VacancyNotFoundException;
+import kg.attractor.jobsearch.model.Category;
+import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
@@ -27,31 +29,40 @@ public class VacancyServiceImpl implements VacancyService {
                 vacancy.getId(),
                 vacancy.getName(),
                 vacancy.getDescription(),
-                vacancy.getCategoryId(),
+                vacancy.getCategory() != null ? vacancy.getCategory().getId() : null,
                 vacancy.getSalary(),
                 vacancy.getExpFrom(),
                 vacancy.getExpTo(),
                 vacancy.getIsActive(),
-                vacancy.getAuthorId(),
+                vacancy.getAuthor() != null ? vacancy.getAuthor().getId() : null,
                 vacancy.getCreatedDate(),
                 vacancy.getUpdateTime()
         );
     }
 
     private Vacancy mapToModel(VacancyDto vacancyDto) {
-        return new Vacancy(
-                vacancyDto.getId(),
-                vacancyDto.getName(),
-                vacancyDto.getDescription(),
-                vacancyDto.getCategoryId(),
-                vacancyDto.getSalary(),
-                vacancyDto.getExpFrom(),
-                vacancyDto.getExpTo(),
-                vacancyDto.getIsActive(),
-                vacancyDto.getAuthorId(),
-                vacancyDto.getCreatedDate(),
-                vacancyDto.getUpdateTime()
-        );
+        Vacancy vacancy = new Vacancy();
+        vacancy.setId(vacancyDto.getId());
+        vacancy.setName(vacancyDto.getName());
+        vacancy.setDescription(vacancyDto.getDescription());
+
+        Category category = new Category();
+        category.setId(vacancyDto.getCategoryId());
+        vacancy.setCategory(category);
+
+        vacancy.setSalary(vacancyDto.getSalary());
+        vacancy.setExpFrom(vacancyDto.getExpFrom());
+        vacancy.setExpTo(vacancyDto.getExpTo());
+        vacancy.setIsActive(vacancyDto.getIsActive());
+
+        User author = new User();
+        author.setId(vacancyDto.getAuthorId());
+        vacancy.setAuthor(author);
+
+        vacancy.setCreatedDate(vacancyDto.getCreatedDate());
+        vacancy.setUpdateTime(vacancyDto.getUpdateTime());
+
+        return vacancy;
     }
 
     @Override

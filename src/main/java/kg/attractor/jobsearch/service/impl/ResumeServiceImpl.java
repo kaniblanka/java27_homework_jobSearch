@@ -1,7 +1,9 @@
 package kg.attractor.jobsearch.service.impl;
 
+import kg.attractor.jobsearch.dao.CategoryDao;
 import kg.attractor.jobsearch.dao.EducationInfoDao;
 import kg.attractor.jobsearch.dao.ResumeDao;
+import kg.attractor.jobsearch.dao.UserDao;
 import kg.attractor.jobsearch.dao.WorkExperienceInfoDao;
 import kg.attractor.jobsearch.dto.ResumeCreateDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
@@ -9,12 +11,12 @@ import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.DeleteEntryException;
 import kg.attractor.jobsearch.exception.ResumeNotFoundException;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
+import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.model.Resume;
+import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
 import kg.attractor.jobsearch.service.ResumeService;
-import kg.attractor.jobsearch.dao.UserDao;
-import kg.attractor.jobsearch.dao.CategoryDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,20 +39,25 @@ public class ResumeServiceImpl implements ResumeService {
         ResumeDto dto = new ResumeDto();
 
         dto.setId(resume.getId());
-        dto.setApplicantId(resume.getApplicantId());
+        dto.setApplicantId(resume.getApplicant() != null ? resume.getApplicant().getId() : null);
         dto.setName(resume.getName());
-        dto.setCategoryId(resume.getCategoryId());
+        dto.setCategoryId(resume.getCategory() != null ? resume.getCategory().getId() : null);
         dto.setSalary(resume.getSalary());
         dto.setIsActive(resume.getIsActive());
         dto.setCreatedDate(resume.getCreatedDate());
         dto.setUpdateTime(resume.getUpdateTime());
-        userDao.findById(resume.getApplicantId()).ifPresent(user -> {
-            dto.setApplicantName(user.getName() + " " + user.getSurname());
-        });
 
-        categoryDao.findById(resume.getCategoryId()).ifPresent(category -> {
-            dto.setCategoryName(category.getName());
-        });
+        if (resume.getApplicant() != null) {
+            userDao.findById(resume.getApplicant().getId()).ifPresent(user -> {
+                dto.setApplicantName(user.getName() + " " + user.getSurname());
+            });
+        }
+
+        if (resume.getCategory() != null) {
+            categoryDao.findById(resume.getCategory().getId()).ifPresent(category -> {
+                dto.setCategoryName(category.getName());
+            });
+        }
 
         return dto;
     }
@@ -59,9 +66,16 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumeDto createResume(ResumeCreateDto dto) throws CreateEntryException {
         try {
             Resume resume = new Resume();
-            resume.setApplicantId(dto.getApplicantId());
+
+            User applicant = new User();
+            applicant.setId(dto.getApplicantId());
+            resume.setApplicant(applicant);
+
+            Category category = new Category();
+            category.setId(dto.getCategoryId());
+            resume.setCategory(category);
+
             resume.setName(dto.getName());
-            resume.setCategoryId(dto.getCategoryId());
             resume.setSalary(dto.getSalary());
             resume.setIsActive(dto.getIsActive());
             resume.setCreatedDate(LocalDateTime.now());
@@ -104,9 +118,15 @@ public class ResumeServiceImpl implements ResumeService {
         Resume existingResume = resumeDao.findById(id)
                 .orElseThrow(ResumeNotFoundException::new);
 
-        existingResume.setApplicantId(dto.getApplicantId());
+        User applicant = new User();
+        applicant.setId(dto.getApplicantId());
+        existingResume.setApplicant(applicant);
+
+        Category category = new Category();
+        category.setId(dto.getCategoryId());
+        existingResume.setCategory(category);
+
         existingResume.setName(dto.getName());
-        existingResume.setCategoryId(dto.getCategoryId());
         existingResume.setSalary(dto.getSalary());
         existingResume.setIsActive(dto.getIsActive());
         existingResume.setUpdateTime(LocalDateTime.now());
