@@ -10,9 +10,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class VacancyMapper implements RowMapper<Vacancy> {
+
     @Override
     public Vacancy mapRow(ResultSet rs, int rowNum) throws SQLException {
         Vacancy vacancy = new Vacancy();
+
         vacancy.setId(rs.getLong("id"));
         vacancy.setName(rs.getString("name"));
         vacancy.setDescription(rs.getString("description"));

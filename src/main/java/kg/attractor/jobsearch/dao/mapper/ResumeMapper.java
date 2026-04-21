@@ -10,9 +10,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class ResumeMapper implements RowMapper<Resume> {
+
     @Override
     public Resume mapRow(ResultSet rs, int rowNum) throws SQLException {
         Resume resume = new Resume();
+
         resume.setId(rs.getLong("id"));
 
         User applicant = new User();

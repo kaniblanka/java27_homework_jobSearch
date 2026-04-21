@@ -9,9 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RespondedApplicantMapper implements RowMapper<RespondedApplicant> {
+
     @Override
     public RespondedApplicant mapRow(ResultSet rs, int rowNum) throws SQLException {
         RespondedApplicant respondedApplicant = new RespondedApplicant();
+
         respondedApplicant.setId(rs.getLong("id"));
 
         Resume resume = new Resume();
