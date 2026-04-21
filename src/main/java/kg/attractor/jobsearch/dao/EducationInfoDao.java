@@ -17,7 +17,7 @@ public class EducationInfoDao {
 
         jdbcTemplate.update(
                 sql,
-                educationInfo.getResumeId(),
+                educationInfo.getResume().getId(),
                 educationInfo.getInstitution(),
                 educationInfo.getProgram(),
                 educationInfo.getStartDate(),

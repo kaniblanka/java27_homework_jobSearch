@@ -91,16 +91,19 @@ public class ResumeServiceImpl implements ResumeService {
 
             log.debug("Created resume with id = {}", resumeId);
 
+            Resume resumeRef = new Resume();
+            resumeRef.setId(resumeId);
+
             if (dto.getEducationInfoList() != null) {
                 for (EducationInfo educationInfo : dto.getEducationInfoList()) {
-                    educationInfo.setResumeId(resumeId);
+                    educationInfo.setResume(resumeRef);
                     educationInfoDao.create(educationInfo);
                 }
             }
 
             if (dto.getWorkExperienceInfoList() != null) {
                 for (WorkExperienceInfo workExperienceInfo : dto.getWorkExperienceInfoList()) {
-                    workExperienceInfo.setResumeId(resumeId);
+                    workExperienceInfo.setResume(resumeRef);
                     workExperienceInfoDao.create(workExperienceInfo);
                 }
             }

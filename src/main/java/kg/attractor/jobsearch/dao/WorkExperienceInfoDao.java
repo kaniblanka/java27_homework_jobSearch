@@ -17,7 +17,7 @@ public class WorkExperienceInfoDao {
 
         jdbcTemplate.update(
                 sql,
-                workExperienceInfo.getResumeId(),
+                workExperienceInfo.getResume().getId(),
                 workExperienceInfo.getYears(),
                 workExperienceInfo.getCompanyName(),
                 workExperienceInfo.getPosition(),
