@@ -58,4 +58,7 @@ public class Resume {
 
     @OneToMany(mappedBy = "resume", fetch = FetchType.EAGER)
     private List<RespondedApplicant> respondedApplicants;
+
+    @OneToMany(mappedBy = "resume")
+    private List<ContactInfo> contacts;
 }
