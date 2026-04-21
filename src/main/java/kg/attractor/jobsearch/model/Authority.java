@@ -22,7 +22,7 @@ import java.util.List;
 public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "authority", nullable = false)
     private String authority;
