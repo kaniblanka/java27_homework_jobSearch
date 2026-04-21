@@ -14,7 +14,6 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class VacancyDao {
-
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public List<Vacancy> findAll() {
@@ -24,7 +23,6 @@ public class VacancyDao {
 
     public Optional<Vacancy> findById(Long id) {
         String sql = "select * from vacancies where id = :id";
-
         return Optional.ofNullable(
                 DataAccessUtils.singleResult(
                         jdbcTemplate.query(
@@ -43,7 +41,6 @@ public class VacancyDao {
 
     public List<Vacancy> findByCategory(Long categoryId) {
         String sql = "select * from vacancies where category_id = :categoryId";
-
         return jdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource().addValue("categoryId", categoryId),
@@ -53,12 +50,10 @@ public class VacancyDao {
 
     public List<Vacancy> findByAuthorId(Long authorId) {
         String sql = """
-                select *
-                from vacancies
+                select * from vacancies
                 where author_id = :authorId
                 order by created_date desc
                 """;
-
         return jdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource().addValue("authorId", authorId),
@@ -73,12 +68,12 @@ public class VacancyDao {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", vacancy.getName())
                 .addValue("description", vacancy.getDescription())
-                .addValue("categoryId", vacancy.getCategoryId())
+                .addValue("categoryId", vacancy.getCategory().getId())
                 .addValue("salary", vacancy.getSalary())
                 .addValue("expFrom", vacancy.getExpFrom())
                 .addValue("expTo", vacancy.getExpTo())
                 .addValue("isActive", vacancy.getIsActive())
-                .addValue("authorId", vacancy.getAuthorId())
+                .addValue("authorId", vacancy.getAuthor().getId())
                 .addValue("createdDate", vacancy.getCreatedDate())
                 .addValue("updateTime", vacancy.getUpdateTime());
 
@@ -94,12 +89,12 @@ public class VacancyDao {
                 .addValue("id", id)
                 .addValue("name", vacancy.getName())
                 .addValue("description", vacancy.getDescription())
-                .addValue("categoryId", vacancy.getCategoryId())
+                .addValue("categoryId", vacancy.getCategory().getId())
                 .addValue("salary", vacancy.getSalary())
                 .addValue("expFrom", vacancy.getExpFrom())
                 .addValue("expTo", vacancy.getExpTo())
                 .addValue("isActive", vacancy.getIsActive())
-                .addValue("authorId", vacancy.getAuthorId())
+                .addValue("authorId", vacancy.getAuthor().getId())
                 .addValue("updateTime", vacancy.getUpdateTime());
 
         return jdbcTemplate.update(sql, params) > 0;
@@ -107,7 +102,6 @@ public class VacancyDao {
 
     public boolean deleteById(Long id) {
         String sql = "delete from vacancies where id = :id";
-
         return jdbcTemplate.update(
                 sql,
                 new MapSqlParameterSource().addValue("id", id)

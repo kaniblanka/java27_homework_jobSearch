@@ -20,14 +20,12 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ResumeDao {
-
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final KeyHolder keyHolder = new GeneratedKeyHolder();
 
     public Optional<Resume> findById(Long id) {
         String sql = "select * from resumes where id = ?";
-
         return Optional.ofNullable(
                 DataAccessUtils.singleResult(
                         jdbcTemplate.query(sql, new ResumeMapper(), id)
@@ -37,7 +35,6 @@ public class ResumeDao {
 
     public List<Resume> findByApplicantId(Long applicantId) {
         String sql = "select * from resumes where applicant_id = :applicantId";
-
         return namedParameterJdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource().addValue("applicantId", applicantId),
@@ -47,7 +44,6 @@ public class ResumeDao {
 
     public List<Resume> findByCategory(Long categoryId) {
         String sql = "select * from resumes where category_id = :categoryId";
-
         return namedParameterJdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource().addValue("categoryId", categoryId),
@@ -57,7 +53,6 @@ public class ResumeDao {
 
     public List<Resume> findAll() {
         String sql = "select * from resumes";
-
         return jdbcTemplate.query(sql, new ResumeMapper());
     }
 
@@ -67,9 +62,9 @@ public class ResumeDao {
 
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setLong(1, resume.getApplicantId());
+            ps.setLong(1, resume.getApplicant().getId());
             ps.setString(2, resume.getName());
-            ps.setLong(3, resume.getCategoryId());
+            ps.setLong(3, resume.getCategory().getId());
             ps.setDouble(4, resume.getSalary());
             ps.setBoolean(5, resume.getIsActive());
             ps.setTimestamp(6, java.sql.Timestamp.valueOf(resume.getCreatedDate()));
@@ -86,9 +81,9 @@ public class ResumeDao {
 
         int rows = jdbcTemplate.update(
                 sql,
-                resume.getApplicantId(),
+                resume.getApplicant().getId(),
                 resume.getName(),
-                resume.getCategoryId(),
+                resume.getCategory().getId(),
                 resume.getSalary(),
                 resume.getIsActive(),
                 java.sql.Timestamp.valueOf(resume.getCreatedDate()),
@@ -101,7 +96,6 @@ public class ResumeDao {
 
     public boolean deleteById(Long id) {
         String sql = "delete from resumes where id = ?";
-
         int rows = jdbcTemplate.update(sql, id);
         return rows > 0;
     }

@@ -15,7 +15,6 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class RespondedApplicantDao {
-
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public Long create(RespondedApplicant respondedApplicant) {
@@ -23,8 +22,8 @@ public class RespondedApplicantDao {
                 "values (:resumeId, :vacancyId, :confirmation)";
 
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("resumeId", respondedApplicant.getResumeId())
-                .addValue("vacancyId", respondedApplicant.getVacancyId())
+                .addValue("resumeId", respondedApplicant.getResume().getId())
+                .addValue("vacancyId", respondedApplicant.getVacancy().getId())
                 .addValue("confirmation", respondedApplicant.getConfirmation());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -35,7 +34,6 @@ public class RespondedApplicantDao {
 
     public List<RespondedApplicant> findByVacancyId(Long vacancyId) {
         String sql = "select * from responses where vacancy_id = :vacancyId";
-
         return jdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource().addValue("vacancyId", vacancyId),
