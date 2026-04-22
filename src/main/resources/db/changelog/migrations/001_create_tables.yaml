@@ -165,19 +165,19 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: int
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
               - column:
                   name: resume_id
-                  type: int
+                  type: bigint
                   constraints:
                     foreignKeyName: fk_response_resume
                     references: resumes(id)
               - column:
                   name: vacancy_id
-                  type: int
+                  type: bigint
                   constraints:
                     foreignKeyName: fk_response_vacancy
                     references: vacancies(id)
