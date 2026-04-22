@@ -8,14 +8,14 @@ databaseChangeLog:
             columns:
               - column:
                   name: user_id
-                  type: int
+                  type: bigint
                   constraints:
                     nullable: false
                     foreignKeyName: fk_user_authorities_user
                     references: users(id)
               - column:
                   name: authority_id
-                  type: int
+                  type: bigint
                   constraints:
                     nullable: false
                     foreignKeyName: fk_user_authorities_authority

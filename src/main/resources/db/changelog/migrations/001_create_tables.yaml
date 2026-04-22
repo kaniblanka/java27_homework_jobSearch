@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: int
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
@@ -55,7 +55,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: int
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
@@ -73,13 +73,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: int
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
               - column:
                   name: applicant_id
-                  type: int
+                  type: bigint
                   constraints:
                     nullable: false
                     foreignKeyName: fk_resume_user
@@ -89,7 +89,7 @@ databaseChangeLog:
                   type: varchar(100)
               - column:
                   name: category_id
-                  type: int
+                  type: bigint
                   constraints:
                     foreignKeyName: fk_resume_category
                     references: categories(id)
@@ -115,7 +115,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: int
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
@@ -127,7 +127,7 @@ databaseChangeLog:
                   type: text
               - column:
                   name: category_id
-                  type: int
+                  type: bigint
                   constraints:
                     foreignKeyName: fk_vacancy_category
                     references: categories(id)
@@ -145,7 +145,7 @@ databaseChangeLog:
                   type: boolean
               - column:
                   name: author_id
-                  type: int
+                  type: bigint
                   constraints:
                     foreignKeyName: fk_vacancy_user
                     references: users(id)
