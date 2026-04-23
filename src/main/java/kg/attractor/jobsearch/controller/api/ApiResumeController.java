@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.controller.api;
 
-import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.ResumeCreateDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.exception.CreateEntryException;
@@ -9,49 +8,56 @@ import kg.attractor.jobsearch.exception.ResumeNotFoundException;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("api/resumes")
+@RequestMapping("/api/resumes")
 @RequiredArgsConstructor
 public class ApiResumeController {
 
     private final ResumeService resumeService;
 
+    @GetMapping
+    public ResponseEntity<Page<ResumeDto>> getAllResumes(Pageable pageable) {
+        return ResponseEntity.ok(resumeService.getAllResumes(pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResumeDto> getResumeById(@PathVariable Long id) throws ResumeNotFoundException {
+        return ResponseEntity.ok(resumeService.getResumeById(id));
+    }
+
+    @GetMapping("/applicant/{applicantId}")
+    public ResponseEntity<Page<ResumeDto>> getResumesByApplicantId(@PathVariable Long applicantId,
+                                                                   Pageable pageable) {
+        return ResponseEntity.ok(resumeService.getResumesByApplicantId(applicantId, pageable));
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<ResumeDto>> getResumesByCategory(@PathVariable Long categoryId,
+                                                                Pageable pageable) {
+        return ResponseEntity.ok(resumeService.getResumesByCategory(categoryId, pageable));
+    }
+
     @PostMapping
-    public ResumeDto createResume(@Valid @RequestBody ResumeCreateDto dto) throws CreateEntryException {
-        return resumeService.createResume(dto);
+    public ResponseEntity<ResumeDto> createResume(@RequestBody ResumeCreateDto dto) throws CreateEntryException {
+        return ResponseEntity.ok(resumeService.createResume(dto));
     }
 
-    @PutMapping("{id}")
-    public ResumeDto updateResume(@PathVariable Long id,
-                                  @Valid @RequestBody ResumeCreateDto dto)
+    @PutMapping("/{id}")
+    public ResponseEntity<ResumeDto> updateResume(@PathVariable Long id,
+                                                  @RequestBody ResumeCreateDto dto)
             throws ResumeNotFoundException, UpdateEntryException {
-        return resumeService.updateResume(id, dto);
+        return ResponseEntity.ok(resumeService.updateResume(id, dto));
     }
 
-    @DeleteMapping("{id}")
-    public HttpStatus deleteResume(@PathVariable Long id)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteResume(@PathVariable Long id)
             throws ResumeNotFoundException, DeleteEntryException {
         resumeService.deleteResume(id);
-        return HttpStatus.OK;
-    }
-
-    @GetMapping
-    public List<ResumeDto> getAllResumes() {
-        return resumeService.getAllResumes();
-    }
-
-    @GetMapping("{id}")
-    public ResumeDto getResumeById(@PathVariable Long id) throws ResumeNotFoundException {
-        return resumeService.getResumeById(id);
-    }
-
-    @GetMapping("category/{categoryId}")
-    public List<ResumeDto> getResumesByCategory(@PathVariable Long categoryId) {
-        return resumeService.getResumesByCategory(categoryId);
+        return ResponseEntity.noContent().build();
     }
 }
