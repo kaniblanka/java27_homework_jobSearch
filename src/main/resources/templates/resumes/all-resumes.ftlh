@@ -1,47 +1,54 @@
 <#import "../layout.ftlh" as main>
 <@main.layout>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="mb-2">Все резюме</h1>
-            <p class="text-muted">Список резюме для работодателя: ${user.name} ${user.surname}</p>
-        </div>
-    </div>
 
-    <#if resumes?size == 0>
-        <div class="alert alert-secondary">
-            Пока нет доступных резюме
-        </div>
-    <#else>
-        <div class="row">
-            <#list resumes as resume>
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">${resume.name}</h5>
+# Все резюме
 
-                            <p class="mb-2">
-                                <strong>Соискатель:</strong> ${resume.applicantName}
-                            </p>
+<#if resumes?size == 0>
 
-                            <p class="mb-2">
-                                <strong>Категория:</strong> ${resume.categoryName}
-                            </p>
+Пока нет доступных резюме
 
-                            <p class="mb-3">
-                                <strong>Желаемая зарплата:</strong> ${resume.salary}
-                            </p>
+<#else>
 
-                            <div class="mt-auto">
-                                <#if resume.isActive?? && resume.isActive>
-                                    <span class="badge bg-success">Активно</span>
-                                <#else>
-                                    <span class="badge bg-secondary">Неактивно</span>
-                                </#if>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </#list>
-        </div>
+    <#list resumes as resume>
+
+##### ${resume.name}
+
+Соискатель: ${resume.applicantName}
+
+Категория: ${resume.categoryName}
+
+Желаемая зарплата: ${resume.salary}
+
+<#if resume.isActive?? && resume.isActive>
+Активно
+<#else>
+Неактивно
+</#if>
+
+---
+
+    </#list>
+
+</#if>
+
+<#if resumesPage.totalPages gt 1>
+<nav>
+    <#if resumesPage.hasPrevious()>
+        <a href="/resumes?page=${resumesPage.number - 1}&size=${resumesPage.size}">Назад</a>
     </#if>
+
+    <#list 0..resumesPage.totalPages - 1 as i>
+        <#if i == resumesPage.number>
+            <strong>${i + 1}</strong>
+        <#else>
+            <a href="/resumes?page=${i}&size=${resumesPage.size}">${i + 1}</a>
+        </#if>
+    </#list>
+
+    <#if resumesPage.hasNext()>
+        <a href="/resumes?page=${resumesPage.number + 1}&size=${resumesPage.size}">Вперед</a>
+    </#if>
+</nav>
+</#if>
+
 </@main.layout>
