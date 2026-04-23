@@ -1,6 +1,5 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.VacancyDao;
 import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.DeleteEntryException;
@@ -9,20 +8,22 @@ import kg.attractor.jobsearch.exception.VacancyNotFoundException;
 import kg.attractor.jobsearch.model.Category;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.Vacancy;
+import kg.attractor.jobsearch.repository.VacancyRepository;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
 
-    private final VacancyDao vacancyDao;
+    private final VacancyRepository vacancyRepository;
 
     private VacancyDto mapToDto(Vacancy vacancy) {
         return new VacancyDto(
@@ -46,18 +47,22 @@ public class VacancyServiceImpl implements VacancyService {
         vacancy.setName(vacancyDto.getName());
         vacancy.setDescription(vacancyDto.getDescription());
 
-        Category category = new Category();
-        category.setId(vacancyDto.getCategoryId());
-        vacancy.setCategory(category);
+        if (vacancyDto.getCategoryId() != null) {
+            Category category = new Category();
+            category.setId(vacancyDto.getCategoryId());
+            vacancy.setCategory(category);
+        }
 
         vacancy.setSalary(vacancyDto.getSalary());
         vacancy.setExpFrom(vacancyDto.getExpFrom());
         vacancy.setExpTo(vacancyDto.getExpTo());
         vacancy.setIsActive(vacancyDto.getIsActive());
 
-        User author = new User();
-        author.setId(vacancyDto.getAuthorId());
-        vacancy.setAuthor(author);
+        if (vacancyDto.getAuthorId() != null) {
+            User author = new User();
+            author.setId(vacancyDto.getAuthorId());
+            vacancy.setAuthor(author);
+        }
 
         vacancy.setCreatedDate(vacancyDto.getCreatedDate());
         vacancy.setUpdateTime(vacancyDto.getUpdateTime());
@@ -74,10 +79,10 @@ public class VacancyServiceImpl implements VacancyService {
             vacancy.setCreatedDate(LocalDateTime.now());
             vacancy.setUpdateTime(LocalDateTime.now());
 
-            vacancyDao.create(vacancy);
+            Vacancy saved = vacancyRepository.save(vacancy);
 
-            log.info("Vacancy created successfully with name='{}'", vacancyDto.getName());
-            return mapToDto(vacancy);
+            log.info("Vacancy created successfully with id={}", saved.getId());
+            return mapToDto(saved);
         } catch (Exception e) {
             log.error("Error while creating vacancy with name='{}'", vacancyDto.getName(), e);
             throw new CreateEntryException("Vacancy was not created");
@@ -88,89 +93,94 @@ public class VacancyServiceImpl implements VacancyService {
     public VacancyDto updateVacancy(Long id, VacancyDto vacancyDto) throws VacancyNotFoundException, UpdateEntryException {
         log.info("Updating vacancy with id={}", id);
 
-        vacancyDao.findById(id).orElseThrow(VacancyNotFoundException::new);
+        Vacancy existing = vacancyRepository.findById(id)
+                .orElseThrow(VacancyNotFoundException::new);
 
-        Vacancy vacancy = mapToModel(vacancyDto);
-        vacancy.setUpdateTime(LocalDateTime.now());
+        try {
+            existing.setName(vacancyDto.getName());
+            existing.setDescription(vacancyDto.getDescription());
 
-        boolean updated = vacancyDao.update(id, vacancy);
+            if (vacancyDto.getCategoryId() != null) {
+                Category category = new Category();
+                category.setId(vacancyDto.getCategoryId());
+                existing.setCategory(category);
+            }
 
-        if (!updated) {
-            log.error("Vacancy was not updated, id={}", id);
+            existing.setSalary(vacancyDto.getSalary());
+            existing.setExpFrom(vacancyDto.getExpFrom());
+            existing.setExpTo(vacancyDto.getExpTo());
+            existing.setIsActive(vacancyDto.getIsActive());
+
+            if (vacancyDto.getAuthorId() != null) {
+                User author = new User();
+                author.setId(vacancyDto.getAuthorId());
+                existing.setAuthor(author);
+            }
+
+            existing.setUpdateTime(LocalDateTime.now());
+
+            Vacancy updated = vacancyRepository.save(existing);
+
+            log.info("Vacancy updated successfully, id={}", id);
+            return mapToDto(updated);
+        } catch (Exception e) {
+            log.error("Vacancy was not updated, id={}", id, e);
             throw new UpdateEntryException("Vacancy was not updated");
         }
-
-        log.info("Vacancy updated successfully, id={}", id);
-
-        return vacancyDao.findById(id)
-                .map(this::mapToDto)
-                .orElseThrow(VacancyNotFoundException::new);
     }
 
     @Override
     public void deleteVacancy(Long id) throws VacancyNotFoundException, DeleteEntryException {
         log.info("Deleting vacancy with id={}", id);
 
-        vacancyDao.findById(id).orElseThrow(VacancyNotFoundException::new);
+        Vacancy vacancy = vacancyRepository.findById(id)
+                .orElseThrow(VacancyNotFoundException::new);
 
-        boolean deleted = vacancyDao.deleteById(id);
-
-        if (!deleted) {
-            log.error("Vacancy was not deleted, id={}", id);
+        try {
+            vacancyRepository.delete(vacancy);
+            log.info("Vacancy deleted successfully, id={}", id);
+        } catch (Exception e) {
+            log.error("Vacancy was not deleted, id={}", id, e);
             throw new DeleteEntryException("Vacancy was not deleted");
         }
-
-        log.info("Vacancy deleted successfully, id={}", id);
     }
 
     @Override
-    public List<VacancyDto> getAllActiveVacancies() {
-        log.info("Getting all active vacancies");
+    public Page<VacancyDto> getAllActiveVacancies(Pageable pageable, String sort) {
+        log.info("Getting all active vacancies with sort={}", sort);
 
-        List<VacancyDto> vacancies = vacancyDao.findActive()
-                .stream()
-                .map(this::mapToDto)
-                .toList();
+        Page<Vacancy> vacancies;
+        if ("responses".equalsIgnoreCase(sort)) {
+            vacancies = vacancyRepository.findAllActiveOrderByResponsesCount(pageable);
+        } else {
+            vacancies = vacancyRepository.findAllActiveOrderByCreatedDate(pageable);
+        }
 
-        log.info("Found {} active vacancies", vacancies.size());
-        return vacancies;
+        return vacancies.map(this::mapToDto);
     }
 
     @Override
-    public List<VacancyDto> getVacanciesByCategory(Long categoryId) {
+    public Page<VacancyDto> getVacanciesByCategory(Long categoryId, Pageable pageable) {
         log.info("Getting vacancies by categoryId={}", categoryId);
-
-        List<VacancyDto> vacancies = vacancyDao.findByCategory(categoryId)
-                .stream()
-                .map(this::mapToDto)
-                .toList();
-
-        log.info("Found {} vacancies for categoryId={}", vacancies.size(), categoryId);
-        return vacancies;
+        return vacancyRepository.findByCategoryId(categoryId, pageable)
+                .map(this::mapToDto);
     }
 
     @Override
     public VacancyDto getVacancyById(Long id) throws VacancyNotFoundException {
         log.info("Getting vacancy by id={}", id);
 
-        VacancyDto vacancyDto = vacancyDao.findById(id)
-                .map(this::mapToDto)
+        Vacancy vacancy = vacancyRepository.findById(id)
                 .orElseThrow(VacancyNotFoundException::new);
 
-        log.info("Vacancy found, id={}", id);
-        return vacancyDto;
+        return mapToDto(vacancy);
     }
 
     @Override
-    public List<VacancyDto> getVacanciesByAuthorId(Long authorId) {
-        log.info("Getting vacancies by authorId={}", authorId);
+    public Page<VacancyDto> getVacanciesByAuthorId(Long authorId, Pageable pageable, String sort) {
+        log.info("Getting vacancies by authorId={} with sort={}", authorId, sort);
 
-        List<VacancyDto> vacancies = vacancyDao.findByAuthorId(authorId)
-                .stream()
-                .map(this::mapToDto)
-                .toList();
-
-        log.info("Found {} vacancies for authorId={}", vacancies.size(), authorId);
-        return vacancies;
+        return vacancyRepository.findByAuthorId(authorId, pageable)
+                .map(this::mapToDto);
     }
 }
