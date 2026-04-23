@@ -1,10 +1,5 @@
 package kg.attractor.jobsearch.service.impl;
 
-import kg.attractor.jobsearch.dao.CategoryDao;
-import kg.attractor.jobsearch.dao.EducationInfoDao;
-import kg.attractor.jobsearch.dao.ResumeDao;
-import kg.attractor.jobsearch.dao.UserDao;
-import kg.attractor.jobsearch.dao.WorkExperienceInfoDao;
 import kg.attractor.jobsearch.dto.ResumeCreateDto;
 import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.exception.CreateEntryException;
@@ -16,24 +11,26 @@ import kg.attractor.jobsearch.model.EducationInfo;
 import kg.attractor.jobsearch.model.Resume;
 import kg.attractor.jobsearch.model.User;
 import kg.attractor.jobsearch.model.WorkExperienceInfo;
+import kg.attractor.jobsearch.repository.CategoryRepository;
+import kg.attractor.jobsearch.repository.ResumeRepository;
+import kg.attractor.jobsearch.repository.UserRepository;
 import kg.attractor.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
 
-    private final ResumeDao resumeDao;
-    private final EducationInfoDao educationInfoDao;
-    private final WorkExperienceInfoDao workExperienceInfoDao;
-    private final UserDao userDao;
-    private final CategoryDao categoryDao;
+    private final ResumeRepository resumeRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
     private ResumeDto mapToDto(Resume resume) {
         ResumeDto dto = new ResumeDto();
@@ -48,13 +45,13 @@ public class ResumeServiceImpl implements ResumeService {
         dto.setUpdateTime(resume.getUpdateTime());
 
         if (resume.getApplicant() != null) {
-            userDao.findById(resume.getApplicant().getId()).ifPresent(user -> {
+            userRepository.findById(resume.getApplicant().getId()).ifPresent(user -> {
                 dto.setApplicantName(user.getName() + " " + user.getSurname());
             });
         }
 
         if (resume.getCategory() != null) {
-            categoryDao.findById(resume.getCategory().getId()).ifPresent(category -> {
+            categoryRepository.findById(resume.getCategory().getId()).ifPresent(category -> {
                 dto.setCategoryName(category.getName());
             });
         }
@@ -67,13 +64,17 @@ public class ResumeServiceImpl implements ResumeService {
         try {
             Resume resume = new Resume();
 
-            User applicant = new User();
-            applicant.setId(dto.getApplicantId());
-            resume.setApplicant(applicant);
+            if (dto.getApplicantId() != null) {
+                User applicant = new User();
+                applicant.setId(dto.getApplicantId());
+                resume.setApplicant(applicant);
+            }
 
-            Category category = new Category();
-            category.setId(dto.getCategoryId());
-            resume.setCategory(category);
+            if (dto.getCategoryId() != null) {
+                Category category = new Category();
+                category.setId(dto.getCategoryId());
+                resume.setCategory(category);
+            }
 
             resume.setName(dto.getName());
             resume.setSalary(dto.getSalary());
@@ -81,115 +82,98 @@ public class ResumeServiceImpl implements ResumeService {
             resume.setCreatedDate(LocalDateTime.now());
             resume.setUpdateTime(LocalDateTime.now());
 
-            Long resumeId = resumeDao.create(resume);
-
-            if (resumeId == null) {
-                throw new CreateEntryException("Resume was not created");
-            }
-
-            resume.setId(resumeId);
-
-            log.debug("Created resume with id = {}", resumeId);
-
-            Resume resumeRef = new Resume();
-            resumeRef.setId(resumeId);
-
             if (dto.getEducationInfoList() != null) {
                 for (EducationInfo educationInfo : dto.getEducationInfoList()) {
-                    educationInfo.setResume(resumeRef);
-                    educationInfoDao.create(educationInfo);
+                    educationInfo.setResume(resume);
                 }
+                resume.setEducationInfoList(dto.getEducationInfoList());
             }
 
             if (dto.getWorkExperienceInfoList() != null) {
                 for (WorkExperienceInfo workExperienceInfo : dto.getWorkExperienceInfoList()) {
-                    workExperienceInfo.setResume(resumeRef);
-                    workExperienceInfoDao.create(workExperienceInfo);
+                    workExperienceInfo.setResume(resume);
                 }
+                resume.setWorkExperienceInfoList(dto.getWorkExperienceInfoList());
             }
 
-            return mapToDto(resume);
-        } catch (CreateEntryException e) {
-            throw e;
+            Resume saved = resumeRepository.save(resume);
+
+            log.debug("Created resume with id = {}", saved.getId());
+            return mapToDto(saved);
         } catch (Exception e) {
+            log.error("Resume was not created", e);
             throw new CreateEntryException("Resume was not created");
         }
     }
 
     @Override
     public ResumeDto updateResume(Long id, ResumeCreateDto dto) throws ResumeNotFoundException, UpdateEntryException {
-        Resume existingResume = resumeDao.findById(id)
+        Resume existingResume = resumeRepository.findById(id)
                 .orElseThrow(ResumeNotFoundException::new);
 
-        User applicant = new User();
-        applicant.setId(dto.getApplicantId());
-        existingResume.setApplicant(applicant);
+        try {
+            if (dto.getApplicantId() != null) {
+                User applicant = new User();
+                applicant.setId(dto.getApplicantId());
+                existingResume.setApplicant(applicant);
+            }
 
-        Category category = new Category();
-        category.setId(dto.getCategoryId());
-        existingResume.setCategory(category);
+            if (dto.getCategoryId() != null) {
+                Category category = new Category();
+                category.setId(dto.getCategoryId());
+                existingResume.setCategory(category);
+            }
 
-        existingResume.setName(dto.getName());
-        existingResume.setSalary(dto.getSalary());
-        existingResume.setIsActive(dto.getIsActive());
-        existingResume.setUpdateTime(LocalDateTime.now());
+            existingResume.setName(dto.getName());
+            existingResume.setSalary(dto.getSalary());
+            existingResume.setIsActive(dto.getIsActive());
+            existingResume.setUpdateTime(LocalDateTime.now());
 
-        boolean updated = resumeDao.update(id, existingResume);
-        if (!updated) {
+            Resume updated = resumeRepository.save(existingResume);
+
+            log.debug("Updated resume with id = {}", id);
+            return mapToDto(updated);
+        } catch (Exception e) {
+            log.error("Resume was not updated, id={}", id, e);
             throw new UpdateEntryException("Resume was not updated");
         }
-
-        log.debug("Updated resume with id = {}", id);
-
-        Resume updatedResume = resumeDao.findById(id)
-                .orElseThrow(ResumeNotFoundException::new);
-
-        return mapToDto(updatedResume);
     }
 
     @Override
     public void deleteResume(Long id) throws ResumeNotFoundException, DeleteEntryException {
-        resumeDao.findById(id).orElseThrow(ResumeNotFoundException::new);
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(ResumeNotFoundException::new);
 
-        educationInfoDao.deleteByResumeId(id);
-        workExperienceInfoDao.deleteByResumeId(id);
-
-        boolean deleted = resumeDao.deleteById(id);
-
-        if (!deleted) {
+        try {
+            resumeRepository.delete(resume);
+            log.debug("Deleted resume with id = {}", id);
+        } catch (Exception e) {
+            log.error("Resume was not deleted, id={}", id, e);
             throw new DeleteEntryException("Resume was not deleted");
         }
-
-        log.debug("Deleted resume with id = {}", id);
     }
 
     @Override
-    public List<ResumeDto> getAllResumes() {
-        return resumeDao.findAll()
-                .stream()
-                .map(this::mapToDto)
-                .toList();
+    public Page<ResumeDto> getAllResumes(Pageable pageable) {
+        return resumeRepository.findAll(pageable)
+                .map(this::mapToDto);
     }
 
     @Override
-    public List<ResumeDto> getResumesByCategory(Long categoryId) {
-        return resumeDao.findByCategory(categoryId)
-                .stream()
-                .map(this::mapToDto)
-                .toList();
+    public Page<ResumeDto> getResumesByCategory(Long categoryId, Pageable pageable) {
+        return resumeRepository.findByCategoryId(categoryId, pageable)
+                .map(this::mapToDto);
     }
 
     @Override
-    public List<ResumeDto> getResumesByApplicantId(Long applicantId) {
-        return resumeDao.findByApplicantId(applicantId)
-                .stream()
-                .map(this::mapToDto)
-                .toList();
+    public Page<ResumeDto> getResumesByApplicantId(Long applicantId, Pageable pageable) {
+        return resumeRepository.findByApplicantId(applicantId, pageable)
+                .map(this::mapToDto);
     }
 
     @Override
     public ResumeDto getResumeById(Long id) throws ResumeNotFoundException {
-        Resume resume = resumeDao.findById(id)
+        Resume resume = resumeRepository.findById(id)
                 .orElseThrow(ResumeNotFoundException::new);
 
         return mapToDto(resume);
