@@ -6,21 +6,22 @@ import kg.attractor.jobsearch.exception.CreateEntryException;
 import kg.attractor.jobsearch.exception.DeleteEntryException;
 import kg.attractor.jobsearch.exception.ResumeNotFoundException;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ResumeService {
+
     ResumeDto createResume(ResumeCreateDto dto) throws CreateEntryException;
 
     ResumeDto updateResume(Long id, ResumeCreateDto dto) throws ResumeNotFoundException, UpdateEntryException;
 
     void deleteResume(Long id) throws ResumeNotFoundException, DeleteEntryException;
 
-    List<ResumeDto> getAllResumes();
+    Page<ResumeDto> getAllResumes(Pageable pageable);
 
-    List<ResumeDto> getResumesByCategory(Long categoryId);
+    Page<ResumeDto> getResumesByCategory(Long categoryId, Pageable pageable);
 
-    List<ResumeDto> getResumesByApplicantId(Long applicantId);
+    Page<ResumeDto> getResumesByApplicantId(Long applicantId, Pageable pageable);
 
     ResumeDto getResumeById(Long id) throws ResumeNotFoundException;
 }
