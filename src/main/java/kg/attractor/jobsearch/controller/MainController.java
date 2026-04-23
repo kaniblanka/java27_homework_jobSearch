@@ -1,10 +1,14 @@
 package kg.attractor.jobsearch.controller;
 
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -13,8 +17,16 @@ public class MainController {
     private final VacancyService vacancyService;
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("vacancies", vacancyService.getAllActiveVacancies());
+    public String index(Model model,
+                        Pageable pageable,
+                        @RequestParam(defaultValue = "date") String sort) {
+
+        Page<VacancyDto> vacanciesPage = vacancyService.getAllActiveVacancies(pageable, sort);
+
+        model.addAttribute("vacanciesPage", vacanciesPage);
+        model.addAttribute("vacancies", vacanciesPage.getContent());
+        model.addAttribute("sort", sort);
+
         return "index";
     }
 }

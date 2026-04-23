@@ -3,6 +3,7 @@ package kg.attractor.jobsearch.controller;
 import jakarta.validation.Valid;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
+import kg.attractor.jobsearch.dto.VacancyDto;
 import kg.attractor.jobsearch.exception.UpdateEntryException;
 import kg.attractor.jobsearch.exception.UserNotFoundException;
 import kg.attractor.jobsearch.service.ImageService;
@@ -10,6 +11,8 @@ import kg.attractor.jobsearch.service.ResumeService;
 import kg.attractor.jobsearch.service.UserService;
 import kg.attractor.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -102,10 +105,19 @@ public class ProfileController {
     }
 
     @GetMapping("vacancies")
-    public String myVacanciesPage(Model model, Principal principal) throws UserNotFoundException {
+    public String myVacanciesPage(Model model,
+                                  Principal principal,
+                                  Pageable pageable,
+                                  @RequestParam(defaultValue = "date") String sort) throws UserNotFoundException {
         UserDto user = userService.findByEmail(principal.getName());
+
+        Page<VacancyDto> vacanciesPage = vacancyService.getVacanciesByAuthorId(user.getId(), pageable, sort);
+
         model.addAttribute("user", user);
-        model.addAttribute("vacancies", vacancyService.getVacanciesByAuthorId(user.getId()));
+        model.addAttribute("vacanciesPage", vacanciesPage);
+        model.addAttribute("vacancies", vacanciesPage.getContent());
+        model.addAttribute("sort", sort);
+
         return "vacancies/my-vacancies";
     }
 
