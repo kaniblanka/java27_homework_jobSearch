@@ -1,6 +1,7 @@
 package kg.attractor.jobsearch.controller;
 
 import jakarta.validation.Valid;
+import kg.attractor.jobsearch.dto.ResumeDto;
 import kg.attractor.jobsearch.dto.UserDto;
 import kg.attractor.jobsearch.dto.UserEditDto;
 import kg.attractor.jobsearch.dto.VacancyDto;
@@ -122,10 +123,17 @@ public class ProfileController {
     }
 
     @GetMapping("resumes")
-    public String myResumesPage(Model model, Principal principal) throws UserNotFoundException {
+    public String myResumesPage(Model model,
+                                Principal principal,
+                                Pageable pageable) throws UserNotFoundException {
         UserDto user = userService.findByEmail(principal.getName());
+
+        Page<ResumeDto> resumesPage = resumeService.getResumesByApplicantId(user.getId(), pageable);
+
         model.addAttribute("user", user);
-        model.addAttribute("resumes", resumeService.getResumesByApplicantId(user.getId()));
+        model.addAttribute("resumesPage", resumesPage);
+        model.addAttribute("resumes", resumesPage.getContent());
+
         return "resumes/my-resumes";
     }
 }
