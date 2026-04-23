@@ -1,45 +1,69 @@
 <#import "../layout.ftlh" as main>
 <@main.layout>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="mb-2">Мои вакансии</h1>
-            <p class="text-muted">Вакансии работодателя: ${user.name} ${user.surname}</p>
-        </div>
 
-        <a href="/employer/vacancies/create" class="btn btn-success">Создать вакансию</a>
-    </div>
+# Мои вакансии
 
-    <#if vacancies?size == 0>
-        <div class="alert alert-secondary">
-            У вас пока нет вакансий
-        </div>
-    <#else>
-        <div class="row">
-            <#list vacancies as vacancy>
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">${vacancy.name}</h5>
-                            <p class="card-text">${vacancy.description}</p>
+Вакансии работодателя: ${user.name} ${user.surname}
 
-                            <p class="mb-1"><strong>Зарплата:</strong> ${vacancy.salary}</p>
-                            <p class="mb-1"><strong>Опыт:</strong> ${vacancy.expFrom} - ${vacancy.expTo}</p>
+[Создать вакансию](/employer/vacancies/create)
 
-                            <#if vacancy.isActive?? && vacancy.isActive>
-                                <span class="badge bg-success">Активна</span>
-                            <#else>
-                                <span class="badge bg-secondary">Неактивна</span>
-                            </#if>
+<form method="get" class="mb-3">
+    <label for="sort">Сортировка:</label>
+    <select name="sort" id="sort" onchange="this.form.submit()">
+        <option value="date" <#if sort == "date">selected</#if>>По дате публикации</option>
+        <option value="responses" <#if sort == "responses">selected</#if>>По количеству откликов</option>
+    </select>
+    <input type="hidden" name="size" value="${vacanciesPage.size}">
+</form>
 
-                            <div class="mt-3">
-                                <a href="/employer/vacancies/edit/${vacancy.id}" class="btn btn-warning btn-sm">
-                                    Редактировать
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </#list>
-        </div>
+<#if vacancies?size == 0>
+
+У вас пока нет вакансий
+
+<#else>
+
+    <#list vacancies as vacancy>
+
+#### ${vacancy.name}
+
+${vacancy.description}
+
+Зарплата: ${vacancy.salary}
+
+Опыт: ${vacancy.expFrom} - ${vacancy.expTo}
+
+<#if vacancy.isActive?? && vacancy.isActive>
+Активна
+<#else>
+Неактивна
+</#if>
+
+[Редактировать](/employer/vacancies/edit/${vacancy.id})
+
+---
+
+    </#list>
+
+</#if>
+
+<#if vacanciesPage.totalPages gt 1>
+<nav>
+    <#if vacanciesPage.hasPrevious()>
+        <a href="/profile/vacancies?page=${vacanciesPage.number - 1}&size=${vacanciesPage.size}&sort=${sort}">Назад</a>
     </#if>
+
+    <#list 0..vacanciesPage.totalPages - 1 as i>
+        <#if i == vacanciesPage.number>
+            <strong>${i + 1}</strong>
+        <#else>
+            <a href="/profile/vacancies?page=${i}&size=${vacanciesPage.size}&sort=${sort}">${i + 1}</a>
+        </#if>
+    </#list>
+
+    <#if vacanciesPage.hasNext()>
+        <a href="/profile/vacancies?page=${vacanciesPage.number + 1}&size=${vacanciesPage.size}&sort=${sort}">Вперед</a>
+    </#if>
+</nav>
+</#if>
+
 </@main.layout>

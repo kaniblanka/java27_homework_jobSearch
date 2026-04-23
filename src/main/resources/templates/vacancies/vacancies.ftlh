@@ -1,21 +1,59 @@
 <#import "../layout.ftlh" as main>
 <@main.layout>
-    <div class="mb-4">
-        <h1 class="mb-3">Все вакансии</h1>
-    </div>
 
-    <div class="row">
+    # Все вакансии
+
+    <form method="get" class="mb-3">
+        <label for="sort">Сортировка:</label>
+        <select name="sort" id="sort" onchange="this.form.submit()">
+            <option value="date" <#if sort == "date">selected</#if>>По дате публикации</option>
+            <option value="responses" <#if sort == "responses">selected</#if>>По количеству откликов</option>
+        </select>
+        <input type="hidden" name="size" value="${vacanciesPage.size}">
+    </form>
+
+    <#if vacancies?size == 0>
+        Вакансий пока нет
+    <#else>
         <#list vacancies as vacancy>
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">${vacancy.name}</h5>
-                        <p class="card-text">${vacancy.description}</p>
-                        <p><strong>Зарплата:</strong> ${vacancy.salary}</p>
-                        <p><strong>Опыт:</strong> ${vacancy.expFrom} - ${vacancy.expTo}</p>
-                    </div>
-                </div>
-            </div>
+
+            #### ${vacancy.name}
+
+            ${vacancy.description}
+
+            Зарплата: ${vacancy.salary}
+
+            Опыт: ${vacancy.expFrom} - ${vacancy.expTo}
+
+            <#if vacancy.isActive?? && vacancy.isActive>
+                Активна
+            <#else>
+                Неактивна
+            </#if>
+
+            ---
+
         </#list>
-    </div>
+    </#if>
+
+    <#if vacanciesPage.totalPages gt 1>
+        <nav>
+            <#if vacanciesPage.hasPrevious()>
+                <a href="/vacancies?page=${vacanciesPage.number - 1}&size=${vacanciesPage.size}&sort=${sort}">Назад</a>
+            </#if>
+
+            <#list 0..vacanciesPage.totalPages - 1 as i>
+                <#if i == vacanciesPage.number>
+                    <strong>${i + 1}</strong>
+                <#else>
+                    <a href="/vacancies?page=${i}&size=${vacanciesPage.size}&sort=${sort}">${i + 1}</a>
+                </#if>
+            </#list>
+
+            <#if vacanciesPage.hasNext()>
+                <a href="/vacancies?page=${vacanciesPage.number + 1}&size=${vacanciesPage.size}&sort=${sort}">Вперед</a>
+            </#if>
+        </nav>
+    </#if>
+
 </@main.layout>
