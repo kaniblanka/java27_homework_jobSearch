@@ -1,45 +1,56 @@
 <#import "../layout.ftlh" as main>
 <@main.layout>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="mb-2">Мои резюме</h1>
-            <p class="text-muted">Резюме соискателя: ${user.name} ${user.surname}</p>
-        </div>
 
-        <a href="/candidate/resumes/create" class="btn btn-success">Создать резюме</a>
-    </div>
+# Мои резюме
 
-    <#if resumes?size == 0>
-        <div class="alert alert-secondary">
-            У вас пока нет резюме
-        </div>
-    <#else>
-        <div class="row">
-            <#list resumes as resume>
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">${resume.name}</h5>
+Резюме соискателя: ${user.name} ${user.surname}
 
-                            <p class="mb-2">
-                                <strong>Желаемая зарплата:</strong> ${resume.salary}
-                            </p>
+[Создать резюме](/resumes/create)
 
-                            <#if resume.isActive?? && resume.isActive>
-                                <span class="badge bg-success">Активно</span>
-                            <#else>
-                                <span class="badge bg-secondary">Неактивно</span>
-                            </#if>
+<#if resumes?size == 0>
 
-                            <div class="mt-3">
-                                <a href="/candidate/resumes/edit/${resume.id}" class="btn btn-warning btn-sm">
-                                    Редактировать
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </#list>
-        </div>
+У вас пока нет резюме
+
+<#else>
+
+    <#list resumes as resume>
+
+##### ${resume.name}
+
+Желаемая зарплата: ${resume.salary}
+
+<#if resume.isActive?? && resume.isActive>
+Активно
+<#else>
+Неактивно
+</#if>
+
+[Редактировать](/resumes/edit/${resume.id})
+
+---
+
+    </#list>
+
+</#if>
+
+<#if resumesPage.totalPages gt 1>
+<nav>
+    <#if resumesPage.hasPrevious()>
+        <a href="/profile/resumes?page=${resumesPage.number - 1}&size=${resumesPage.size}">Назад</a>
     </#if>
+
+    <#list 0..resumesPage.totalPages - 1 as i>
+        <#if i == resumesPage.number>
+            <strong>${i + 1}</strong>
+        <#else>
+            <a href="/profile/resumes?page=${i}&size=${resumesPage.size}">${i + 1}</a>
+        </#if>
+    </#list>
+
+    <#if resumesPage.hasNext()>
+        <a href="/profile/resumes?page=${resumesPage.number + 1}&size=${resumesPage.size}">Вперед</a>
+    </#if>
+</nav>
+</#if>
+
 </@main.layout>
