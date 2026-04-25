@@ -17,13 +17,13 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
     Page<Vacancy> findByCategoryId(Long categoryId, Pageable pageable);
 
     @Query("""
-            select v
-            from Vacancy v
-            left join v.respondedApplicants r
-            where v.isActive = true
-            group by v
-            order by count(r) desc
-            """)
+        select v
+        from Vacancy v
+        left join v.respondedApplicants r
+        where v.isActive = true
+        group by v.id, v.name, v.description, v.category, v.salary, v.expFrom, v.expTo, v.isActive, v.author, v.createdDate, v.updateTime
+        order by count(r.id) desc
+        """)
     Page<Vacancy> findAllActiveOrderByResponsesCount(Pageable pageable);
 
     @Query("""
