@@ -12,25 +12,49 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
     Page<Vacancy> findByIsActiveTrue(Pageable pageable);
 
+    Page<Vacancy> findByIsActiveTrueOrderByCreatedDateDesc(Pageable pageable);
+
     Page<Vacancy> findByAuthorId(Long authorId, Pageable pageable);
+
+    Page<Vacancy> findByAuthorIdOrderByCreatedDateDesc(Long authorId, Pageable pageable);
 
     Page<Vacancy> findByCategoryId(Long categoryId, Pageable pageable);
 
-    @Query("""
-        select v
-        from Vacancy v
-        left join v.respondedApplicants r
-        where v.isActive = true
-        group by v.id, v.name, v.description, v.category, v.salary, v.expFrom, v.expTo, v.isActive, v.author, v.createdDate, v.updateTime
-        order by count(r.id) desc
-        """)
+    @Query(
+            value = """
+                    select v
+                    from Vacancy v
+                    where v.isActive = true
+                    order by (
+                        select count(r)
+                        from RespondedApplicant r
+                        where r.vacancy.id = v.id
+                    ) desc
+                    """,
+            countQuery = """
+                    select count(v)
+                    from Vacancy v
+                    where v.isActive = true
+                    """
+    )
     Page<Vacancy> findAllActiveOrderByResponsesCount(Pageable pageable);
 
-    @Query("""
-            select v
-            from Vacancy v
-            where v.isActive = true
-            order by v.createdDate desc
-            """)
-    Page<Vacancy> findAllActiveOrderByCreatedDate(Pageable pageable);
+    @Query(
+            value = """
+                    select v
+                    from Vacancy v
+                    where v.author.id = :authorId
+                    order by (
+                        select count(r)
+                        from RespondedApplicant r
+                        where r.vacancy.id = v.id
+                    ) desc
+                    """,
+            countQuery = """
+                    select count(v)
+                    from Vacancy v
+                    where v.author.id = :authorId
+                    """
+    )
+    Page<Vacancy> findByAuthorIdOrderByResponsesCount(Long authorId, Pageable pageable);
 }

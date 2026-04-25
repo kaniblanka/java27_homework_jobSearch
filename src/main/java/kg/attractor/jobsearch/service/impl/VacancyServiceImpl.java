@@ -150,10 +150,11 @@ public class VacancyServiceImpl implements VacancyService {
         log.info("Getting all active vacancies with sort={}", sort);
 
         Page<Vacancy> vacancies;
+
         if ("responses".equalsIgnoreCase(sort)) {
             vacancies = vacancyRepository.findAllActiveOrderByResponsesCount(pageable);
         } else {
-            vacancies = vacancyRepository.findAllActiveOrderByCreatedDate(pageable);
+            vacancies = vacancyRepository.findByIsActiveTrueOrderByCreatedDateDesc(pageable);
         }
 
         return vacancies.map(this::mapToDto);
@@ -180,7 +181,14 @@ public class VacancyServiceImpl implements VacancyService {
     public Page<VacancyDto> getVacanciesByAuthorId(Long authorId, Pageable pageable, String sort) {
         log.info("Getting vacancies by authorId={} with sort={}", authorId, sort);
 
-        return vacancyRepository.findByAuthorId(authorId, pageable)
-                .map(this::mapToDto);
+        Page<Vacancy> vacancies;
+
+        if ("responses".equalsIgnoreCase(sort)) {
+            vacancies = vacancyRepository.findByAuthorIdOrderByResponsesCount(authorId, pageable);
+        } else {
+            vacancies = vacancyRepository.findByAuthorIdOrderByCreatedDateDesc(authorId, pageable);
+        }
+
+        return vacancies.map(this::mapToDto);
     }
 }
